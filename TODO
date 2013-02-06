@@ -1,0 +1,8 @@
+* add configuration interface, make stuffs runtime-configurable by a
+  configuration file
+* fix alsa control interface. acutally a toolchain issues since we can't use any
+  system native calls like libm or pthread by now.
+* AUTOTOOL this shit. The Makefile sucks like hell.
+* Add support for play back local music repo, make it switchable.
+* Add LED support, everybody loves blinking stuffs.
+* some more ....
