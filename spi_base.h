@@ -1,6 +1,6 @@
-/* 
+/*
  * spi_base.h
- * 
+ *
  * (C)2009 Luotao Fu <l.fu@pengutronix.de>
  *
  * (C)2013 Luotao Fu <devtty0@gmai.com>

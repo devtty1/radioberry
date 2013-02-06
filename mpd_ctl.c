@@ -1,4 +1,4 @@
-/* 
+/*
  * mpd_ctl.c
  * (c)2013 Luotao Fu <devtty0@gmail.com>
  *
@@ -110,7 +110,7 @@ int init_mpd_handle(struct mpd_handle *m_handle)
 
 	m_handle->mpd_obj = mpd_new(m_handle->host, m_handle->port,
 			m_handle->password);
-	
+
 	mpd_signal_connect_status_changed(m_handle->mpd_obj,
 			(StatusChangedCallback)status_changed, NULL);
 

@@ -35,11 +35,11 @@ int load_stations_playlist(struct mpd_handle *m_handle)
 {
 	int ret = 0;
 	const char* path = DEFAULT_PLS_NAME;
-	
+
 	ret = mpd_playlist_queue_load(m_handle->mpd_obj, path);
 
 	if (!ret)
-		ret = mpd_playlist_queue_commit(m_handle->mpd_obj); 	
+		ret = mpd_playlist_queue_commit(m_handle->mpd_obj);
 
 	return ret;
 }

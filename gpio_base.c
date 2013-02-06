@@ -1,6 +1,6 @@
 /* gpio_base.c
  * (c)2013 Luotao Fu <devtty0@gmail.com>
- * 
+ *
  * basic callbacks to access gpio in userspace using sysfs interface
  *
  * This file is part of radioberry.
@@ -15,7 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with radioberry.  If not, see <http://www.gnu.org/licenses/>.
- * 
+ *
  */
 
 #include <stdio.h>
@@ -33,7 +33,7 @@
 int init_gpio(uint8_t gpio)
 {
 	int fd, ret = 0;
-	char buf[4] = {0}; 
+	char buf[4] = {0};
 	char f_name[40] = {0};
 
 	sprintf(f_name, "/sys/class/gpio/gpio%d/direction", gpio);
@@ -56,7 +56,7 @@ int init_gpio(uint8_t gpio)
 	if (write(fd, buf, strlen(buf)) < 0) {
 		printf("%d: ", gpio);
 		perror("failed to initialize gpio");
-		ret = 1;		
+		ret = 1;
 	}
 
 	close(fd);
@@ -67,7 +67,7 @@ out:
 int close_gpio(uint8_t gpio)
 {
 	int fd, ret = 0;
-	char buf[4] = {0}; 
+	char buf[4] = {0};
 
 	fd = open("/sys/class/gpio/unexport", O_WRONLY);
 
@@ -83,7 +83,7 @@ int close_gpio(uint8_t gpio)
 	if (write(fd, buf, strlen(buf)) < 0) {
 		printf("%d: ", gpio);
 		perror("failed to close gpio");
-		ret = 1;	
+		ret = 1;
 	}
 
 	close(fd);
@@ -116,7 +116,7 @@ int set_gpio_dir(uint8_t gpio, uint8_t in_out)
 		perror("failed to set gpio direction");
 		ret = 1;
 	}
-	
+
 	close(fd);
 out:
 	return ret;
@@ -136,13 +136,13 @@ int set_gpio_val(uint8_t gpio, uint8_t val)
 		ret = 1;
 		goto out;
 	}
-	
-	sprintf(buf, "%d", val); 
+
+	sprintf(buf, "%d", val);
 
 	if (write(fd, buf, strlen(buf)) < 0) {
 		printf("%d: ", gpio);
 		perror("failed to set gpio value");
-		ret = 1;		
+		ret = 1;
 	}
 
 	close(fd);

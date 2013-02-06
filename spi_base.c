@@ -1,4 +1,4 @@
-/* 
+/*
  * spi_base.c
  *
  * (C)2009 Luotao Fu <l.fu@pengutronix.de>

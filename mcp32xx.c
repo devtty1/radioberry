@@ -1,7 +1,7 @@
-/* 
+/*
  * mcp32xx.c
  *
- * simple control interface for MCP32XX ADC in userspace using spidev 
+ * simple control interface for MCP32XX ADC in userspace using spidev
  * (C) 2013 Luotao Fu (devtty0@gmail.com)
  *
  * This file is part of radioberry.
@@ -39,7 +39,7 @@ uint8_t mcp32xx_init(struct mcp32xx_dev *mcp_dev)
 {
 	uint8_t ret = 0;
 
-	mcp_dev->spi_dev.dev_name = DEFAULT_SPIDEV_NAME; 
+	mcp_dev->spi_dev.dev_name = DEFAULT_SPIDEV_NAME;
 	mcp_dev->dev_conf.bits_per_word = 8;
 	mcp_dev->dev_conf.speed = SPIDEV_SPEED;
 	mcp_dev->dev_conf.lsb_first = 2;
@@ -54,7 +54,7 @@ uint8_t mcp32xx_init(struct mcp32xx_dev *mcp_dev)
 
 	spidev_setstat(&(mcp_dev->spi_dev));
 	spidev_dumpstat(&(mcp_dev->spi_dev));
-	
+
 err_out:
 	return ret;
 }
@@ -87,7 +87,7 @@ uint32_t mcp32xx_get_val(struct mcp32xx_dev *mcp_dev, uint8_t channel_sel)
 
 	output_val = ((rx_buf[0] & 0x1) << 16 | rx_buf[1] << 8 |
 			(rx_buf[2] & 0xe0)) >> 5;
-#if 0	
+#if 0
 	printf("raw0: 0x%x, raw1: 0x%x, raw2: 0x%x, raw3: 0x%x\n", rx_buf[0], rx_buf[1], rx_buf[2], rx_buf[3]);
 #endif
 	return output_val;

@@ -80,7 +80,7 @@ int set_alsa_master_volume(struct volume_handle *vh)
 
 	snd_mixer_selem_get_playback_volume_range(vh->snd_elem, &min, &max);
 
-	/* 
+	/*
 	 * FIXME: Alsa Volume ist in dB and hence logarithm. The linear
 	 * calculation works very poor, since the chip mutes at about half
 	 * position of the poti.

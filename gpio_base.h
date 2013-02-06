@@ -1,4 +1,4 @@
-/* 
+/*
  * gpio_base.h
  * (c) 2013 Luotao Fu <devtty0@gmail.com>
  *
