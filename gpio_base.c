@@ -33,17 +33,14 @@
 int init_gpio(uint8_t gpio)
 {
 	int fd, ret = 0;
-	char buf[4]; 
-	char f_name[40];
+	char buf[4] = {0}; 
+	char f_name[40] = {0};
 
-	memset(f_name, 0, sizeof(f_name));
 	sprintf(f_name, "/sys/class/gpio/gpio%d/direction", gpio);
 
 	/* return if already exported and ready to be set */
 	if (! access(f_name, W_OK))
 		goto out;
-
-	memset(buf, 0, sizeof(buf));
 
 	fd = open("/sys/class/gpio/export", O_WRONLY);
 
@@ -70,9 +67,7 @@ out:
 int close_gpio(uint8_t gpio)
 {
 	int fd, ret = 0;
-	char buf[4]; 
-
-	memset(buf, 0, sizeof(buf));
+	char buf[4] = {0}; 
 
 	fd = open("/sys/class/gpio/unexport", O_WRONLY);
 
@@ -99,10 +94,8 @@ out:
 int set_gpio_dir(uint8_t gpio, uint8_t in_out)
 {
 	int fd, ret = 0, w_res = 0;
-	char f_name[40];
+	char f_name[40] = {0};
 
-	memset(f_name, 0, sizeof(f_name));
-	
 	sprintf(f_name, "/sys/class/gpio/gpio%d/direction", gpio);
 
 	fd = open(f_name, O_WRONLY);
@@ -132,10 +125,8 @@ out:
 int set_gpio_val(uint8_t gpio, uint8_t val)
 {
 	int fd, ret = 0;
-	char f_name[40], buf[2];
+	char f_name[40] = {0}, buf[2] = {0};
 
-	memset(f_name, 0, sizeof(f_name));
-	
 	sprintf(f_name, "/sys/class/gpio/gpio%d/value", gpio);
 
 	fd = open(f_name, O_WRONLY);
