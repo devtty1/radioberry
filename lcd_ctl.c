@@ -1,4 +1,4 @@
-/* 
+/*
  * lcd_ctl.c
  * (c) 2013 Luotao Fu <devtty0@gmail.com>
  *
@@ -104,7 +104,7 @@ static void init_lcd_pins()
 				pins_disabled[i] = set_gpio_dir(pins[i], OUT_GPIO);
 		}
 	}
-	
+
 	/* make sure that RS Pin is low */
 	_check_and_set_gpio(PIN(RS), 0, BY_NR);
 }
@@ -119,20 +119,20 @@ static void init_lcd_screen() {
 	_check_and_set_gpio(PIN(DB4), 1, BY_NR);
 	_lcd_send_cmd();
 	usleep(4200);
-	
+
 	/* Step 3 */
 	_lcd_send_cmd();
 	usleep(110);
-	
+
 	/* Step 4 */
 	_lcd_send_cmd();
 	usleep(110);
-	
+
 	/* Step 5 */
 	_check_and_set_gpio(PIN(DB4), 0, BY_NR);
 	_lcd_send_cmd();
 	usleep(110);
-	
+
 	/* Step 6, the function set instruction. DL/N/F is set here. DL = 0, N =
 	 * 1, F = 0 */
 	_check_and_set_gpio(PIN(DB5), 1, BY_NR);
@@ -142,7 +142,7 @@ static void init_lcd_screen() {
 	_check_and_set_gpio(PIN(DB7), 1, BY_NR);
 	_lcd_send_cmd();
 	usleep(55);
-	
+
 	/* Step 7, DCB here. complete instruction in 8 bit would look like
 	 * 00001DCB */
 	_lcd_clear_pins();
@@ -151,10 +151,10 @@ static void init_lcd_screen() {
 	_check_and_set_gpio(PIN(DB7), 1, BY_NR);
 	_lcd_send_cmd();
 	usleep(55);
-	
+
 	/* Step 8 , clear screen DB0 = 0 */
 	lcd_clear_screen();
-	
+
 	/* Step 9, entry mode set I/D (DB5) and SH (DB4) here. */
 	_lcd_clear_pins();
 	_lcd_send_cmd();
@@ -163,7 +163,7 @@ static void init_lcd_screen() {
 
 	_lcd_send_cmd();
 	usleep(55);
-	
+
 	/* Step 10 - empty*/
 	/* Step 11, set DCB again and enables the display. */
 	_lcd_clear_pins();
@@ -181,7 +181,7 @@ int lcd_init()
 
 	init_lcd_pins();
 	init_lcd_screen();
-	
+
 	for (i = 0; i < sizeof(pins); i++)
 		ret |= pins_disabled[i];
 
@@ -257,7 +257,7 @@ void lcd_print_char(char ch) {
 
 
 	_lcd_send_cmd();
-	
+
 	_check_and_set_gpio(PIN(RS), 0, BY_NR);
 }
 
@@ -286,7 +286,9 @@ void lcd_move_cursor_down() {
 	_lcd_send_cmd();
 }
 
-/* print 2 lines and scroll if necessary. */
+/* print 2 lines and scroll if necessary. Two ring buffers are used to store the
+ * content with the length of exact MAX_LINE_CHAR (mostly 16) characters.
+ */
 void lcd_update_screen(struct lcd_handle *lh)
 {
 	char f_line[MAX_LINE_CHAR] = {0};
@@ -294,15 +296,18 @@ void lcd_update_screen(struct lcd_handle *lh)
 
 	uint8_t fl_bufsize = strlen(lh->fline_buf);
 	uint8_t sl_bufsize = strlen(lh->sline_buf);
-	
+
 	uint8_t fl_remaining_chars = 0, sl_remaining_chars = 0;
+	uint8_t sl_line_remaining_chars = 0;
 
-	uint8_t fl_copy_size, sl_copy_size;
+	uint8_t sl_copy_size;
 
-	/* OUT: scrolling first line is currently commented out, since doing
+	/* FIXME: scrolling first line is currently commented out, since doing
 	 * SW-scrolling sucks and the screen keeps flickering. Scrolling two
-	 * line at once sucks even more. TODO: make it less sucking */
+	 * line at once sucks even more. TODO: make it sucks less... supply
+	 * problem?? */
 #if 0
+	uint8_t fl_copy_size;
 	if (fl_bufsize) {
 		fl_remaining_chars = fl_bufsize - lh->fline_idx;
 		if (fl_remaining_chars > MAX_LINE_CHAR)
@@ -328,13 +333,22 @@ void lcd_update_screen(struct lcd_handle *lh)
 
 		memcpy(s_line, lh->sline_buf + lh->sline_idx, sl_copy_size);
 
+		sl_line_remaining_chars = MAX_LINE_CHAR - sl_copy_size;
+
+		/* ugly hack to fill the space between end of the buffer and
+		 * wrap over with spaces, otherwise we will get NULL termination
+		 * here and print_string stops. There're tones of elegant ways
+		 * to do this. The ugly way works all right though. ;-)*/
+		if (sl_line_remaining_chars > 3) {
+			s_line[sl_copy_size] = ' ';
+			s_line[sl_copy_size + 1] = ' ';
+			s_line[sl_copy_size + 2] = ' ';
+
+			memcpy(s_line + sl_copy_size + 3,
+				lh->sline_buf, sl_line_remaining_chars - 3);
+		}
 		lh->sline_idx++;
 	}
-
-#if DEBUG
-	printf("fline_buf: %s, sline_buf: %s\n fline: %s, sline: %s\n fl_bufsize: %d, fl_idx: %d,  sl_bufsize: %d, sl_idx: %d\n",
-		       	lh->fline_buf, lh->sline_buf, f_line, s_line, fl_bufsize, lh->fline_idx, sl_bufsize, lh->sline_idx);
-#endif
 
 	if (fl_remaining_chars == 0)
 		lh->fline_idx = 0;
@@ -347,14 +361,15 @@ void lcd_update_screen(struct lcd_handle *lh)
 		lcd_print_string(f_line);
 	}
 
-#if 0	
+#if 0
 	if (fl_bufsize) {
 		lcd_return_home();
 		lcd_print_string(f_line);
 	}
-#endif	
-	lcd_move_cursor_down();
+#endif
 
-	if (sl_bufsize)
+	if (sl_bufsize) {
+		lcd_move_cursor_down();
 		lcd_print_string(s_line);
+	}
 }
