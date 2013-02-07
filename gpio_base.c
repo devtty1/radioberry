@@ -122,30 +122,58 @@ out:
 	return ret;
 }
 
+int gpio_get_val_fd(uint8_t gpio)
+{
+	int ret, fd;
+	char f_name[40] = {0};
+
+	snprintf(f_name, 40, "/sys/class/gpio/gpio%d/value", gpio);
+
+	fd = open(f_name, O_RDWR);
+	if (fd < 0) {
+		printf("%d: ", gpio);
+		perror("failed to get gpio value control");
+		ret = -1;
+		goto out;
+	} else
+		ret = fd;
+
+out:
+	return ret;
+}
+
+int set_gpio_val_by_fd(int fd, uint8_t val)
+{
+	int ret = 0;
+	char buf[2] = {0};
+
+	snprintf(buf, 2, "%d", val);
+
+	if (write(fd, buf, strlen(buf)) < 0)
+		ret = 1;
+
+	return ret;
+}
+
 int set_gpio_val(uint8_t gpio, uint8_t val)
 {
 	int fd, ret = 0;
-	char f_name[40] = {0}, buf[2] = {0};
 
-	sprintf(f_name, "/sys/class/gpio/gpio%d/value", gpio);
-
-	fd = open(f_name, O_WRONLY);
+	fd = gpio_get_val_fd(gpio);
 	if (fd < 0) {
-		printf("%d: ", gpio);
-		perror("failed to set gpio value");
+		printf("GPIO %d: failed to get value control\n", gpio);
 		ret = 1;
+
 		goto out;
 	}
 
-	sprintf(buf, "%d", val);
-
-	if (write(fd, buf, strlen(buf)) < 0) {
-		printf("%d: ", gpio);
-		perror("failed to set gpio value");
+	if (set_gpio_val_by_fd(fd, val) != 0) {
+		printf("GPIO %d: failed to set value\n", gpio);
 		ret = 1;
 	}
 
 	close(fd);
+
 out:
 	return ret;
 }

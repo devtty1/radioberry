@@ -36,6 +36,8 @@
 static uint8_t pins[GPIO_PINS_USED] = {LCD_PIN_RS, LCD_PIN_E, LCD_PIN_DB4,
 	LCD_PIN_DB5, LCD_PIN_DB6, LCD_PIN_DB7};
 
+static int gpio_val_fds[GPIO_PINS_USED];
+
 static uint8_t pins_disabled[GPIO_PINS_USED];
 
 static int inline _get_index(uint8_t *array, uint8_t val)
@@ -50,7 +52,7 @@ static int inline _get_index(uint8_t *array, uint8_t val)
 	return -1;
 }
 
-static void inline _check_and_set_gpio(int nr, int val, int mode)
+static void inline _check_and_set_gpio(uint8_t nr, uint8_t val, uint8_t mode)
 {
 	int idx;
 
@@ -60,7 +62,7 @@ static void inline _check_and_set_gpio(int nr, int val, int mode)
 		idx = nr;
 
 	if (! pins_disabled[idx]) {
-		pins_disabled[idx] = set_gpio_val(pins[idx], val);
+		pins_disabled[idx] = set_gpio_val_by_fd(gpio_val_fds[idx], val);
 
 		if (pins_disabled[idx])
 			printf("could not set GPIO %d to %d, Pin disabled\n",
@@ -92,17 +94,25 @@ static void init_lcd_pins()
 {
 	int i;
 
-	for (i = 0; i < sizeof(pins); i++) {
+	for (i = 0; i < (sizeof(pins)); i++) {
 		pins_disabled[i] = init_gpio(pins[i]);
+		if (pins_disabled[i])
+			continue;
 
 		/* first set gpio to high-impedance input, than to output */
-		if (! pins_disabled[i]) {
-			pins_disabled[i] = set_gpio_dir(pins[i], IN_GPIO);
-			usleep(10000);
+		pins_disabled[i] = set_gpio_dir(pins[i], IN_GPIO);
+		if (pins_disabled[i])
+			continue;
 
-			if (! pins_disabled[i])
-				pins_disabled[i] = set_gpio_dir(pins[i], OUT_GPIO);
-		}
+		usleep(10000);
+
+		pins_disabled[i] = set_gpio_dir(pins[i], OUT_GPIO);
+		if (pins_disabled[i])
+			continue;
+
+		gpio_val_fds[i] = gpio_get_val_fd(pins[i]);
+		if (gpio_val_fds[i] < 0)
+			pins_disabled[i] = 1;
 	}
 
 	/* make sure that RS Pin is low */
@@ -192,8 +202,10 @@ void lcd_close()
 {
 	int i;
 
-	for (i = 0; i < sizeof(pins); i++)
+	for (i = 0; i < sizeof(pins); i++) {
+		close(gpio_val_fds[i]);
 		close_gpio(pins[i]);
+	}
 }
 
 /* use built-in command to do shift. Line1 and Line2 are always shifted together*/

@@ -25,7 +25,10 @@
 
 int init_gpio(uint8_t gpio);
 int set_gpio_dir(uint8_t gpio, uint8_t direction);
-int set_gpio_val(uint8_t gpio, uint8_t val);
 int close_gpio(uint8_t gpio);
+
+int set_gpio_val_by_fd(int fd, uint8_t val);
+int gpio_get_val_fd(uint8_t gpio);
+int set_gpio_val(uint8_t gpio, uint8_t val);
 
 #endif
