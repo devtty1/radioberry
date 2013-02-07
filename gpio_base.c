@@ -36,7 +36,7 @@ int init_gpio(uint8_t gpio)
 	char buf[4] = {0};
 	char f_name[40] = {0};
 
-	sprintf(f_name, "/sys/class/gpio/gpio%d/direction", gpio);
+	snprintf(f_name, 40, "/sys/class/gpio/gpio%d/direction", gpio);
 
 	/* return if already exported and ready to be set */
 	if (! access(f_name, W_OK))
@@ -51,7 +51,7 @@ int init_gpio(uint8_t gpio)
 		goto out;
 	}
 
-	sprintf(buf, "%d", gpio);
+	snprintf(buf, 4, "%d", gpio);
 
 	if (write(fd, buf, strlen(buf)) < 0) {
 		printf("%d: ", gpio);
@@ -78,7 +78,7 @@ int close_gpio(uint8_t gpio)
 		goto out;
 	}
 
-	sprintf(buf, "%d", gpio);
+	snprintf(buf, 4, "%d", gpio);
 
 	if (write(fd, buf, strlen(buf)) < 0) {
 		printf("%d: ", gpio);
@@ -96,7 +96,7 @@ int set_gpio_dir(uint8_t gpio, uint8_t in_out)
 	int fd, ret = 0, w_res = 0;
 	char f_name[40] = {0};
 
-	sprintf(f_name, "/sys/class/gpio/gpio%d/direction", gpio);
+	snprintf(f_name, 40, "/sys/class/gpio/gpio%d/direction", gpio);
 
 	fd = open(f_name, O_WRONLY);
 	if (fd < 0) {
