@@ -38,6 +38,11 @@
 
 #include "radioberry.h"
 
+/* interval(us) to go through all ADC channels and update LCD Screen */
+#define UPDATE_INTERVAL 300000
+/* Interval(us) to update song info */
+#define SONG_UPDATE_INTERVAL 2000000
+
 static uint8_t running;
 static uint8_t vol_control_enabled = 1;
 static uint8_t tuner_control_enabled = 1;
@@ -116,10 +121,9 @@ int main(int argc, const char *argv[])
 	struct mpd_handle m_handle = {0};
 	struct lcd_handle l_handle = { .fline_buf = {0}, .sline_buf = {0} };
 
-	useconds_t sleep_usec = 400000 / channel_used;
-	/* Update Song info every 2 seconds */
+	useconds_t sleep_usec = UPDATE_INTERVAL / channel_used;
 	uint8_t song_update_count = 0;
-	uint8_t song_update_count_max = 2000000 / sleep_usec;
+	uint8_t song_update_count_max = SONG_UPDATE_INTERVAL / sleep_usec;
 
 	m_handle.lh = &l_handle;
 	v_handle.mh = &m_handle;
@@ -176,10 +180,14 @@ int main(int argc, const char *argv[])
 		if (adc_channel + 1 == CHANNEL_USED) {
 			adc_channel = 0;
 
+			/* detect if initial loop is done. Start update lcd
+			 * after initial loop */
 			if (init)
 				init = 0;
-			else
-				lcd_update_screen(&l_handle);
+			else {
+				if (lcd_control_enabled)
+					lcd_update_screen(&l_handle);
+			}
 		} else
 			adc_channel++;
 
