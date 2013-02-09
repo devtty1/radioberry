@@ -20,22 +20,8 @@
 #ifndef SET_LCD_CTL_H
 #define SET_LCD_CTL_H
 
+#include "config_ctl.h"
 #include "gpio_base.h"
-
-/*RS: Register select */
-#define LCD_PIN_RS 25
-/*E: "Enable" -> Clock */
-#define LCD_PIN_E 24
-/*DB: Data-Bit 4-7 (4-bit operation)*/
-#define LCD_PIN_DB4 23
-#define LCD_PIN_DB5 17
-#define LCD_PIN_DB6 27
-#define LCD_PIN_DB7 22
-
-#define MAX_LINE_CHAR 16
-#define MAX_LINE_BUF 80
-
-#define GPIO_PINS_USED 6
 
 #define LCD_SHIFT_R 1
 #define LCD_SHIFT_L 0

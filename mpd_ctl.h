@@ -22,11 +22,8 @@
 
 #include <libmpd-1.0/libmpd/libmpd.h>
 #include <libmpd-1.0/libmpd/debug_printf.h>
+#include "config_ctl.h"
 #include "lcd_ctl.h"
-
-#define DEFAULT_HOST "localhost"
-#define DEFAULT_PORT 6600
-#define MAX_TUNER_POS 12
 
 struct mpd_handle {
 	char* host;

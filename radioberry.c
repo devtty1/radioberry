@@ -38,11 +38,6 @@
 
 #include "radioberry.h"
 
-/* interval(us) to go through all ADC channels and update LCD Screen */
-#define UPDATE_INTERVAL 300000
-/* Interval(us) to update song info */
-#define SONG_UPDATE_INTERVAL 2000000
-
 static uint8_t running;
 static uint8_t vol_control_enabled = 1;
 static uint8_t tuner_control_enabled = 1;

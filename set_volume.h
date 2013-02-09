@@ -3,9 +3,8 @@
 
 #include <alsa/asoundlib.h>
 #include <alsa/mixer.h>
+#include "config_ctl.h"
 #include "mpd_ctl.h"
-
-#define MAX_VOL_STEPS 50
 
 struct volume_handle {
 	snd_mixer_t *snd_handle;

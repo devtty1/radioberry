@@ -20,9 +20,8 @@
 #ifndef SET_TUNER_H
 #define SET_TUNER_H
 
+#include "config_ctl.h"
 #include "mpd_ctl.h"
-
-#define DEFAULT_PLS_NAME "stations"
 
 int load_stations_playlist(struct mpd_handle *m_handle);
 int set_tuner(struct mpd_handle *m_handle);
