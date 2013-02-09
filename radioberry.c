@@ -79,7 +79,6 @@ static int process_value(struct volume_handle *vh, struct mpd_handle *mh,
 	switch (adc_chan) {
 	case VOLUME_CHAN:
 		if (! vol_control_enabled) {
-			ret = 1;
 			goto out;
 		}
 
@@ -90,12 +89,13 @@ static int process_value(struct volume_handle *vh, struct mpd_handle *mh,
 
 	case TUNER_CHAN:
 		if (! tuner_control_enabled) {
-			ret = 1;
 			goto out;
 		}
 
 		mh->tuner_raw_val = val;
-		set_tuner(mh);
+		/* check result of set_tuner. If set_tuner failed, we have NULL
+		 * pointers to mpd_song and hence might have segfaults. */
+		ret = set_tuner(mh);
 
 		break;
 
@@ -144,31 +144,30 @@ int main(int argc, const char *argv[])
 
 	ret = mcp32xx_init(&mcp_dev);
 	if (ret) {
-		printf("failed to initialize spi device. Exiting\n");
-		goto err_init;
+		printf("failed to initialize spi device, analog control"
+				" devices disabled\n");
+		tuner_control_enabled = 0;
+		vol_control_enabled = 0;
 	}
 
 	ret = init_mpd_handle(&m_handle);
 	if (ret) {
 		printf("could not initialize mpd client,"
-				" tuner control was disabled\n");
+				" tuner control disabled\n");
 		tuner_control_enabled = 0;
 	}
 
-	if (tuner_control_enabled) {
-		ret = load_stations_playlist(&m_handle);
-
-		if (ret) {
-			printf("could not load radio stations list,"
-				" tuner control was disabled\n");
+	ret = load_stations_playlist(&m_handle);
+	if (ret) {
+		printf("could not load radio stations list,"
+				" tuner control disabled\n");
 		tuner_control_enabled = 0;
-		}
 	}
 
 	ret = init_vol_control(&v_handle);
 	if (ret) {
 		printf("could not initialize volume control,"
-				" this function was disabled\n");
+				" volumen control disabled\n");
 		vol_control_enabled = 0;
 	}
 
@@ -206,9 +205,16 @@ int main(int argc, const char *argv[])
 		if (init) {
 			val_old[adc_channel] = val_cur[adc_channel];
 
-			process_value(&v_handle, &m_handle,
+			ret = process_value(&v_handle, &m_handle,
 					val_cur[adc_channel], adc_channel);
-			continue;
+
+			/* skip comparing old/new values while intializing */
+			if (ret) {
+				printf("unrecoverable error, quit now\n");
+				break;
+			}
+			else
+				continue;
 		}
 
 		diff = val_old[adc_channel] - val_cur[adc_channel];
@@ -240,7 +246,6 @@ int main(int argc, const char *argv[])
 	close_vol_ctl(&v_handle);
 	close_mpd_handle(&m_handle);
 
-err_init:
 	exit(ret);
 }
 
