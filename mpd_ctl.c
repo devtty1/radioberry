@@ -36,6 +36,11 @@ void status_changed(MpdObj *mi, ChangedStatusType what)
 		printf("playlist changed!! \n");
 }
 
+void error_callback(MpdObj *mi,int errorid, char *msg, void *userdata)
+{
+	printf("Error %i: '%s'\n", errorid, msg);
+}
+
 /* compare the stored song info with the current song and update, if necessary,
  * the line buffer for the lcd display. */
 void update_song_info(struct mpd_handle *mh)
@@ -121,6 +126,9 @@ int init_mpd_handle(struct mpd_handle *m_handle)
 
 	mpd_signal_connect_status_changed(m_handle->mpd_obj,
 			(StatusChangedCallback)status_changed, NULL);
+
+	mpd_signal_connect_error(m_handle->mpd_obj,
+			(ErrorCallback)error_callback, NULL);
 
 	ret = mpd_connect(m_handle->mpd_obj);
 
