@@ -40,8 +40,10 @@ void status_changed(MpdObj *mi, ChangedStatusType what)
  * the line buffer for the lcd display. */
 void update_song_info(struct mpd_handle *mh)
 {
-	char old_name[MAX_LINE_BUF] = {0}, old_title[MAX_LINE_BUF] = {0};
-	char new_name[MAX_LINE_BUF] = {0}, new_title[MAX_LINE_BUF] = {0};
+	char old_name[MAX_LINE_BUF + 1] = {0};
+	char old_title[MAX_LINE_BUF + 1] = {0};
+	char new_name[MAX_LINE_BUF + 1] = {0};
+	char new_title[MAX_LINE_BUF + 1] = {0};
 
 	if (mh->mpd_song != NULL) {
 		if (mh->mpd_song->name != NULL)
@@ -57,6 +59,12 @@ void update_song_info(struct mpd_handle *mh)
 	mh->mpd_song = mpd_playlist_get_song(mh->mpd_obj,
 			mpd_player_get_current_song_id(mh->mpd_obj));
 
+	if (mh->mpd_song == NULL) {
+		memset(mh->lh->fline_buf, 0, MAX_LINE_BUF + 1);
+		memset(mh->lh->sline_buf, 0, MAX_LINE_BUF + 1);
+		return;
+	}
+
 	if (mh->mpd_song->name != NULL) {
 		strncpy(new_name, mh->mpd_song->name, MAX_LINE_BUF);
 
@@ -71,7 +79,7 @@ void update_song_info(struct mpd_handle *mh)
 				new_title[MAX_LINE_BUF] = '\0';
 	}
 
-#if DEBUG
+#ifdef DEBUG
 	printf("O_NAME: %s O_TITLE: %s \n"
 		"N_NAME: %s N_TITLE: %s\n"
 		"diff: %d, tdiff: %d\n",
