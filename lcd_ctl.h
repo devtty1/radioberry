@@ -39,6 +39,11 @@ struct lcd_handle {
 	uint8_t cline_scr;
 };
 
+struct extended_char {
+	unsigned char in_char[MAX_EXT_CHARS];
+	unsigned char lcd_char[MAX_EXT_CHARS];
+};
+
 void lcd_builtin_shift_screen(int direction);
 void lcd_clear_screen();
 void lcd_return_home();

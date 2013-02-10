@@ -47,6 +47,8 @@
 
 #define GPIO_PINS_USED 6
 
+/* maximum of supported chars outside 7bit ASCII */
+#define MAX_EXT_CHARS 40
 /* MPD configuration */
 #define DEFAULT_HOST "localhost"
 #define DEFAULT_PORT 6600

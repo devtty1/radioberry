@@ -40,6 +40,29 @@ static int gpio_val_fds[GPIO_PINS_USED];
 
 static uint8_t pins_disabled[GPIO_PINS_USED];
 
+static struct extended_char ext_char_tbl = {
+	/* These are German chars: ae, oe, ue, Ae, Oe, Ue, Sz */
+	.in_char = {0xa4, 0xb6, 0xbc, 0x84, 0x96, 0x9c, 0x9f},
+	.lcd_char = {0xE1, 0xEF, 0xF5, 0xE1, 0xEF, 0xF5, 0xE2}
+};
+
+static char inline decode_extended_char(unsigned char in_ch)
+{
+	int i = 0;
+	unsigned char out_ch = 0xff;
+
+	while (i < sizeof(ext_char_tbl.in_char) &&
+			ext_char_tbl.in_char[i] != '\0') {
+		if (in_ch == ext_char_tbl.in_char[i]) {
+			out_ch = ext_char_tbl.lcd_char[i];
+			break;
+		} else
+			i++;
+	}
+
+	return out_ch;
+}
+
 static int inline _get_index(uint8_t *array, uint8_t val)
 {
 	int i;
@@ -273,11 +296,27 @@ void lcd_print_char(char ch) {
 	_check_and_set_gpio(PIN(RS), 0, BY_NR);
 }
 
-void lcd_print_string(char* str) {
+void lcd_print_string(char* str)
+{
 	int i;
+	int multi_byte_detected = 0;
+	char st;
 
-	for (i = 0; i < strlen(str); i++)
-		lcd_print_char(str[i]);
+	for (i = 0; i < strlen(str); i++) {
+		/* ugly hack to support utf-8 multibyte U+0x80 ~ U+0xFF */
+		if ((unsigned char)str[i] == 195) {
+			multi_byte_detected = 1;
+			continue;
+		}
+
+		if (multi_byte_detected) {
+			st = decode_extended_char(str[i]);
+			multi_byte_detected = 0;
+		} else
+			st = str[i];
+
+		lcd_print_char(st);
+	}
 }
 
 void lcd_move_cursor_down() {
