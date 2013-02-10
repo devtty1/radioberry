@@ -173,7 +173,7 @@ int main(int argc, const char *argv[])
 
 		if (adc_channel + 1 == CHANNEL_USED) {
 			adc_channel = 0;
-
+			mpd_status_update(m_handle.mpd_obj);
 			/* detect if initial loop is done. Start update lcd
 			 * after initial loop */
 			if (init)
