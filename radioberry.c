@@ -152,8 +152,10 @@ int main(int argc, const char *argv[])
 		tuner_control_enabled = 0;
 	}
 
+	/* disable tuner control if we cannot get any station at all. If one
+	 * station fails, let's process and wait for tuner changes */
 	ret = load_stations_playlist(&m_handle);
-	if (ret) {
+	if (ret > 0) {
 		printf("could not load radio stations list,"
 				" tuner control disabled\n");
 		tuner_control_enabled = 0;
