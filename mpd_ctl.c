@@ -45,18 +45,8 @@ void error_callback(MpdObj *mi,int errorid, char *msg, void *userdata)
  * the line buffer for the lcd display. */
 void update_song_info(struct mpd_handle *mh)
 {
-	char old_name[MAX_LINE_BUF + 1] = {0};
-	char old_title[MAX_LINE_BUF + 1] = {0};
-	char new_name[MAX_LINE_BUF + 1] = {0};
-	char new_title[MAX_LINE_BUF + 1] = {0};
-
-	if (mh->mpd_song != NULL) {
-		if (mh->mpd_song->name != NULL)
-			strncpy(old_name, mh->mpd_song->name, MAX_LINE_BUF);
-
-		if (mh->mpd_song->title != NULL)
-			strncpy(old_title, mh->mpd_song->title, MAX_LINE_BUF);
-	}
+	char name[MAX_LINE_BUF + 1] = {0};
+	char title[MAX_LINE_BUF + 1] = {0};
 
 	/* mpd_playlist_get_current_song has a bug, so that in most case the
 	 * title will not be fetched while play stream. To work around this we
@@ -71,42 +61,42 @@ void update_song_info(struct mpd_handle *mh)
 	}
 
 	if (mh->mpd_song->name != NULL) {
-		strncpy(new_name, mh->mpd_song->name, MAX_LINE_BUF);
+		strncpy(name, mh->mpd_song->name, MAX_LINE_BUF);
 
 		if (strlen(mh->mpd_song->name) > MAX_LINE_BUF)
-			new_name[MAX_LINE_BUF] = '\0';
+			name[MAX_LINE_BUF] = '\0';
 	}
 
 	if (mh->mpd_song->title != NULL) {
-		strncpy(new_title, mh->mpd_song->title, MAX_LINE_BUF);
+		strncpy(title, mh->mpd_song->title, MAX_LINE_BUF);
 
 		if (strlen(mh->mpd_song->title) > MAX_LINE_BUF)
-			new_title[MAX_LINE_BUF] = '\0';
+			title[MAX_LINE_BUF] = '\0';
 	}
 
 #ifdef DEBUG
 	printf("O_NAME: %s O_TITLE: %s \n"
 		"N_NAME: %s N_TITLE: %s\n"
 		"diff: %d, tdiff: %d\n",
-		old_name, old_title, new_name, new_title,
-		strcmp(old_name, new_name),
-		strcmp(old_title, new_title));
+		mh->lh->fline_buf, mh->lh->sline_buf, name, title,
+		strcmp(mh->lh->fline_buf, name),
+		strcmp(mh->lh->sline_buf, title));
 #endif
 
 	/* In Internet radio mode the name field contains the station name,
 	 * while the title field contains the songtitle. (not provided by all
 	 * stations). So the name goes to first line and the title goes to the
 	 * second */
-	if (strcmp(old_name, new_name) != 0) {
+	if (strcmp(mh->lh->fline_buf, name) != 0) {
 		mh->lh->fline_update = 1;
 		mh->lh->fline_idx = 0;
-		strncpy(mh->lh->fline_buf, new_name, MAX_LINE_BUF + 1);
+		strncpy(mh->lh->fline_buf, name, MAX_LINE_BUF + 1);
 	}
 
-	if (strcmp(old_title, new_title) != 0) {
+	if (strcmp(mh->lh->sline_buf, title) != 0) {
 		mh->lh->sline_update = 1;
 		mh->lh->sline_idx = 0;
-		strncpy(mh->lh->sline_buf, new_title, MAX_LINE_BUF + 1);
+		strncpy(mh->lh->sline_buf, title, MAX_LINE_BUF + 1);
 	}
 }
 
