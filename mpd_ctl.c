@@ -74,14 +74,14 @@ void update_song_info(struct mpd_handle *mh)
 		strncpy(new_name, mh->mpd_song->name, MAX_LINE_BUF);
 
 		if (strlen(mh->mpd_song->name) > MAX_LINE_BUF)
-				new_name[MAX_LINE_BUF] = '\0';
+			new_name[MAX_LINE_BUF] = '\0';
 	}
 
 	if (mh->mpd_song->title != NULL) {
 		strncpy(new_title, mh->mpd_song->title, MAX_LINE_BUF);
 
 		if (strlen(mh->mpd_song->title) > MAX_LINE_BUF)
-				new_title[MAX_LINE_BUF] = '\0';
+			new_title[MAX_LINE_BUF] = '\0';
 	}
 
 #ifdef DEBUG
