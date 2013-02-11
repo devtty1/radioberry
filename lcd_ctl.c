@@ -32,6 +32,7 @@
 
 #define PIN(a) LCD_PIN_##a
 #define get_bit(ch, pos) ((ch >> pos) & 1)
+#define FILL_PATTERN " * "
 
 static uint8_t pins[GPIO_PINS_USED] = {LCD_PIN_RS, LCD_PIN_E, LCD_PIN_DB4,
 	LCD_PIN_DB5, LCD_PIN_DB6, LCD_PIN_DB7};
@@ -351,7 +352,7 @@ void lcd_update_screen(struct lcd_handle *lh)
 	uint8_t fl_remaining_chars = 0, sl_remaining_chars = 0;
 	uint8_t sl_line_remaining_chars = 0;
 
-	uint8_t sl_copy_size;
+	uint8_t sl_copy_size, sline_scrolling = 0;
 
 	/* FIXME: scrolling first line is currently commented out, since doing
 	 * SW-scrolling sucks and the screen keeps flickering. Scrolling two
@@ -374,7 +375,8 @@ void lcd_update_screen(struct lcd_handle *lh)
 	if (fl_bufsize)
 		memcpy(f_line, lh->fline_buf, MAX_LINE_CHAR);
 
-	if (sl_bufsize) {
+	if (sl_bufsize > MAX_LINE_CHAR) {
+		sline_scrolling = 1;
 		sl_remaining_chars = sl_bufsize - lh->sline_idx;
 
 		if (sl_remaining_chars > MAX_LINE_CHAR)
@@ -386,30 +388,35 @@ void lcd_update_screen(struct lcd_handle *lh)
 
 		sl_line_remaining_chars = MAX_LINE_CHAR - sl_copy_size;
 
-		/* ugly hack to fill the space between end of the buffer and
-		 * wrap over with spaces, otherwise we will get NULL termination
-		 * here and print_string stops. There're tones of elegant ways
-		 * to do this. The ugly way works all right though. ;-)*/
-		if (sl_line_remaining_chars > 3) {
-			s_line[sl_copy_size] = ' ';
-			s_line[sl_copy_size + 1] = ' ';
-			s_line[sl_copy_size + 2] = ' ';
+		if (sl_line_remaining_chars > 0 &&
+			sl_line_remaining_chars <= strlen(FILL_PATTERN))
+			memcpy(s_line + sl_copy_size, FILL_PATTERN,
+					sl_line_remaining_chars);
 
-			memcpy(s_line + sl_copy_size + 3,
-				lh->sline_buf, sl_line_remaining_chars - 3);
+		if (sl_line_remaining_chars > strlen(FILL_PATTERN)
+				&& sl_line_remaining_chars < MAX_LINE_CHAR) {
+			memcpy(s_line + sl_copy_size, FILL_PATTERN,
+					strlen(FILL_PATTERN));
+			memcpy(s_line + sl_copy_size + strlen(FILL_PATTERN),
+                                lh->sline_buf,
+				sl_line_remaining_chars - strlen(FILL_PATTERN));
 		}
+
 		lh->sline_idx++;
-	}
+		
+		if (sl_remaining_chars == 0)
+			lh->sline_idx = 0;
+	} else
+		memcpy(s_line, lh->sline_buf, sl_bufsize);
+
 
 	if (fl_remaining_chars == 0)
 		lh->fline_idx = 0;
 
-	if (sl_remaining_chars == 0)
-		lh->sline_idx = 0;
-
 	if (lh->fline_update) {
 		lcd_clear_screen();
 		lcd_print_string(f_line);
+		lh->fline_update = 0;
 	}
 
 #if 0
@@ -419,7 +426,8 @@ void lcd_update_screen(struct lcd_handle *lh)
 	}
 #endif
 
-	if (sl_bufsize) {
+	if (lh->sline_update || sline_scrolling) {
+		lh->sline_update = 0;
 		lcd_move_cursor_down();
 		lcd_print_string(s_line);
 	}
