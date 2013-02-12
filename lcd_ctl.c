@@ -114,6 +114,30 @@ static void inline _lcd_send_cmd()
 	usleep(1000);
 }
 
+static void inline scroll_buffer(char* l_buf, uint8_t *idx, char* line)
+{
+	uint8_t copy_size;
+	uint8_t bufsize_padded = strlen(l_buf) + strlen(FILL_PATTERN);
+	uint8_t remaining_chars = bufsize_padded - *idx;
+	char lbuf_padded[bufsize_padded];
+
+	memcpy(lbuf_padded, l_buf, strlen(l_buf));
+	memcpy(lbuf_padded + strlen(l_buf), FILL_PATTERN, strlen(FILL_PATTERN));
+
+	if (remaining_chars > MAX_LINE_CHAR)
+		memcpy(line, lbuf_padded + *idx, MAX_LINE_CHAR);
+	else {
+		memcpy(line, lbuf_padded + *idx, remaining_chars);
+		memcpy(line + remaining_chars, lbuf_padded, MAX_LINE_CHAR
+				- remaining_chars);
+	}
+
+	(*idx)++;
+
+	if (remaining_chars == 0)
+		*idx = 0;
+}
+
 static void init_lcd_pins()
 {
 	int i;
@@ -343,8 +367,8 @@ void lcd_move_cursor_down() {
  */
 void lcd_update_screen(struct lcd_handle *lh)
 {
-	char f_line[MAX_LINE_CHAR] = {0};
-	char s_line[MAX_LINE_CHAR] = {0};
+	char f_line[MAX_LINE_CHAR + 1] = {0};
+	char s_line[MAX_LINE_CHAR + 1] = {0};
 
 	uint8_t fl_bufsize = strlen(lh->fline_buf);
 	uint8_t sl_bufsize = strlen(lh->sline_buf);
@@ -377,35 +401,7 @@ void lcd_update_screen(struct lcd_handle *lh)
 
 	if (sl_bufsize > MAX_LINE_CHAR) {
 		sline_scrolling = 1;
-		sl_remaining_chars = sl_bufsize - lh->sline_idx;
-
-		if (sl_remaining_chars > MAX_LINE_CHAR)
-			sl_copy_size = MAX_LINE_CHAR;
-		else
-			sl_copy_size = sl_remaining_chars;
-
-		memcpy(s_line, lh->sline_buf + lh->sline_idx, sl_copy_size);
-
-		sl_line_remaining_chars = MAX_LINE_CHAR - sl_copy_size;
-
-		if (sl_line_remaining_chars > 0 &&
-			sl_line_remaining_chars <= strlen(FILL_PATTERN))
-			memcpy(s_line + sl_copy_size, FILL_PATTERN,
-					sl_line_remaining_chars);
-
-		if (sl_line_remaining_chars > strlen(FILL_PATTERN)
-				&& sl_line_remaining_chars < MAX_LINE_CHAR) {
-			memcpy(s_line + sl_copy_size, FILL_PATTERN,
-					strlen(FILL_PATTERN));
-			memcpy(s_line + sl_copy_size + strlen(FILL_PATTERN),
-                                lh->sline_buf,
-				sl_line_remaining_chars - strlen(FILL_PATTERN));
-		}
-
-		lh->sline_idx++;
-		
-		if (sl_remaining_chars == 0)
-			lh->sline_idx = 0;
+		scroll_buffer(lh->sline_buf, &(lh->sline_idx), s_line);
 	} else
 		memcpy(s_line, lh->sline_buf, sl_bufsize);
 
