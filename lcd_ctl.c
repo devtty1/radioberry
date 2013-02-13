@@ -32,7 +32,8 @@
 
 #define PIN(a) LCD_PIN_##a
 #define get_bit(ch, pos) ((ch >> pos) & 1)
-#define FILL_PATTERN " * "
+#define FILL_PATTERN1 " ** "
+#define FILL_PATTERN2 " ++ "
 
 static uint8_t pins[GPIO_PINS_USED] = {LCD_PIN_RS, LCD_PIN_E, LCD_PIN_DB4,
 	LCD_PIN_DB5, LCD_PIN_DB6, LCD_PIN_DB7};
@@ -114,14 +115,15 @@ static void inline _lcd_send_cmd()
 	usleep(1000);
 }
 
-static void inline scroll_buffer(char* l_buf, uint8_t *idx, char* line)
+static void inline scroll_buffer(char* l_buf, uint8_t *idx, char* line,
+		char* pad_pattern)
 {
-	uint8_t bufsize_padded = strlen(l_buf) + strlen(FILL_PATTERN);
+	uint8_t bufsize_padded = strlen(l_buf) + strlen(pad_pattern);
 	uint8_t remaining_chars = bufsize_padded - *idx;
 	char lbuf_padded[bufsize_padded];
 
 	memcpy(lbuf_padded, l_buf, strlen(l_buf));
-	memcpy(lbuf_padded + strlen(l_buf), FILL_PATTERN, strlen(FILL_PATTERN));
+	memcpy(lbuf_padded + strlen(l_buf), pad_pattern, strlen(pad_pattern));
 
 	if (remaining_chars > MAX_LINE_CHAR)
 		memcpy(line, lbuf_padded + *idx, MAX_LINE_CHAR);
@@ -372,48 +374,31 @@ void lcd_update_screen(struct lcd_handle *lh)
 	uint8_t fl_bufsize = strlen(lh->fline_buf);
 	uint8_t sl_bufsize = strlen(lh->sline_buf);
 
-	uint8_t sline_scrolling = 0;
+	uint8_t sline_scrolling = 0, fline_scrolling = 0;
 
-	/* FIXME: scrolling first line is currently commented out, since doing
-	 * SW-scrolling sucks and the screen keeps flickering. Scrolling two
-	 * line at once sucks even more. TODO: make it sucks less... supply
-	 * problem?? */
-#if 0
-	uint8_t fl_copy_size;
-	if (fl_bufsize) {
-		fl_remaining_chars = fl_bufsize - lh->fline_idx;
-		if (fl_remaining_chars > MAX_LINE_CHAR)
-			fl_copy_size = MAX_LINE_CHAR;
-		else
-			fl_copy_size = fl_remaining_chars;
-
-		memcpy(f_line, lh->fline_buf + lh->fline_idx, fl_copy_size);
-
-		lh->fline_idx++;
-	}
-#endif
-	if (fl_bufsize)
-		memcpy(f_line, lh->fline_buf, MAX_LINE_CHAR);
+	if (fl_bufsize > MAX_LINE_CHAR) {
+		fline_scrolling = 1;
+		scroll_buffer(lh->fline_buf, &(lh->fline_idx), f_line,
+				FILL_PATTERN2);
+	} else
+		memcpy(f_line, lh->fline_buf, fl_bufsize);
 
 	if (sl_bufsize > MAX_LINE_CHAR) {
 		sline_scrolling = 1;
-		scroll_buffer(lh->sline_buf, &(lh->sline_idx), s_line);
+		scroll_buffer(lh->sline_buf, &(lh->sline_idx), s_line,
+				FILL_PATTERN1);
 	} else
 		memcpy(s_line, lh->sline_buf, sl_bufsize);
 
 
-	if (lh->fline_update) {
-		lcd_clear_screen();
-		lcd_print_string(f_line);
-		lh->fline_update = 0;
-	}
+	if (lh->fline_update || fline_scrolling) {
+		if (lh->fline_update)
+			lcd_clear_screen();
 
-#if 0
-	if (fl_bufsize) {
+		lh->fline_update = 0;
 		lcd_return_home();
 		lcd_print_string(f_line);
 	}
-#endif
 
 	if (lh->sline_update || sline_scrolling) {
 		lh->sline_update = 0;
