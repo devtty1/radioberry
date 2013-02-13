@@ -36,9 +36,13 @@ void status_changed(MpdObj *mi, ChangedStatusType what)
 		printf("playlist changed!! \n");
 }
 
-void error_callback(MpdObj *mi,int errorid, char *msg, void *userdata)
+void error_callback(MpdObj *mi, int errorid, char *msg, struct mpd_handle *mh)
 {
 	printf("Error %i: '%s'\n", errorid, msg);
+	snprintf(mh->lh->fline_buf, MAX_LINE_CHAR, "Errorcode: %i", errorid);
+	snprintf(mh->lh->sline_buf, MAX_LINE_CHAR, "%s", msg);
+	mh->lh->fline_update = 1;
+	mh->lh->sline_update = 1;
 }
 
 /* compare the stored song info with the current song and update, if necessary,
@@ -55,8 +59,11 @@ void update_song_info(struct mpd_handle *mh)
 			mpd_player_get_current_song_id(mh->mpd_obj));
 
 	if (mh->mpd_song == NULL) {
-		memset(mh->lh->fline_buf, 0, MAX_LINE_BUF + 1);
-		memset(mh->lh->sline_buf, 0, MAX_LINE_BUF + 1);
+		snprintf(mh->lh->fline_buf, MAX_LINE_CHAR, "Radioberry");
+		snprintf(mh->lh->sline_buf, MAX_LINE_CHAR, "Searching...");
+		mh->lh->fline_update = 1;
+		mh->lh->sline_update = 1;
+
 		return;
 	}
 
@@ -118,7 +125,7 @@ int init_mpd_handle(struct mpd_handle *m_handle)
 			(StatusChangedCallback)status_changed, NULL);
 
 	mpd_signal_connect_error(m_handle->mpd_obj,
-			(ErrorCallback)error_callback, NULL);
+			(ErrorCallback)error_callback, m_handle);
 
 	ret = mpd_connect(m_handle->mpd_obj);
 
