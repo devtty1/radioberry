@@ -370,11 +370,15 @@ void lcd_update_screen(struct lcd_handle *lh)
 {
 	char f_line[MAX_LINE_CHAR + 1] = {0};
 	char s_line[MAX_LINE_CHAR + 1] = {0};
+	char empty_line[MAX_LINE_CHAR + 1] = {0};
 
 	uint8_t fl_bufsize = strlen(lh->fline_buf);
 	uint8_t sl_bufsize = strlen(lh->sline_buf);
 
-	uint8_t sline_scrolling = 0, fline_scrolling = 0;
+	uint8_t sline_scrolling = 0, fline_scrolling = 0, i;
+
+	for (i = 0; i < MAX_LINE_CHAR; i++)
+		empty_line[i] = ' ';
 
 	if (fl_bufsize > MAX_LINE_CHAR) {
 		fline_scrolling = 1;
@@ -392,6 +396,7 @@ void lcd_update_screen(struct lcd_handle *lh)
 
 
 	if (lh->fline_update || fline_scrolling) {
+		/* always clear whole screen if first line is to be updated */
 		if (lh->fline_update)
 			lcd_clear_screen();
 
@@ -401,6 +406,12 @@ void lcd_update_screen(struct lcd_handle *lh)
 	}
 
 	if (lh->sline_update || sline_scrolling) {
+		/* clear the second line */
+		if (lh->sline_update) {
+			lcd_move_cursor_down();
+			lcd_print_string(empty_line);
+		}
+
 		lh->sline_update = 0;
 		lcd_move_cursor_down();
 		lcd_print_string(s_line);
