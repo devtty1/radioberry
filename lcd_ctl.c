@@ -116,7 +116,6 @@ static void inline _lcd_send_cmd()
 
 static void inline scroll_buffer(char* l_buf, uint8_t *idx, char* line)
 {
-	uint8_t copy_size;
 	uint8_t bufsize_padded = strlen(l_buf) + strlen(FILL_PATTERN);
 	uint8_t remaining_chars = bufsize_padded - *idx;
 	char lbuf_padded[bufsize_padded];
@@ -135,7 +134,7 @@ static void inline scroll_buffer(char* l_buf, uint8_t *idx, char* line)
 	(*idx)++;
 
 	if (remaining_chars == 0)
-		*idx = 0;
+		*idx = 1;
 }
 
 static void init_lcd_pins()
@@ -373,10 +372,7 @@ void lcd_update_screen(struct lcd_handle *lh)
 	uint8_t fl_bufsize = strlen(lh->fline_buf);
 	uint8_t sl_bufsize = strlen(lh->sline_buf);
 
-	uint8_t fl_remaining_chars = 0, sl_remaining_chars = 0;
-	uint8_t sl_line_remaining_chars = 0;
-
-	uint8_t sl_copy_size, sline_scrolling = 0;
+	uint8_t sline_scrolling = 0;
 
 	/* FIXME: scrolling first line is currently commented out, since doing
 	 * SW-scrolling sucks and the screen keeps flickering. Scrolling two
@@ -405,9 +401,6 @@ void lcd_update_screen(struct lcd_handle *lh)
 	} else
 		memcpy(s_line, lh->sline_buf, sl_bufsize);
 
-
-	if (fl_remaining_chars == 0)
-		lh->fline_idx = 0;
 
 	if (lh->fline_update) {
 		lcd_clear_screen();

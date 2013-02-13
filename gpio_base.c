@@ -36,7 +36,8 @@ int init_gpio(uint8_t gpio)
 	char buf[4] = {0};
 	char f_name[40] = {0};
 
-	snprintf(f_name, 40, "/sys/class/gpio/gpio%d/direction", gpio);
+	snprintf(f_name, sizeof(f_name), "/sys/class/gpio/gpio%d/direction",
+			gpio);
 
 	/* return if already exported and ready to be set */
 	if (! access(f_name, W_OK))
@@ -51,7 +52,7 @@ int init_gpio(uint8_t gpio)
 		goto out;
 	}
 
-	snprintf(buf, 4, "%d", gpio);
+	snprintf(buf, sizeof(buf), "%d", gpio);
 
 	if (write(fd, buf, strlen(buf)) < 0) {
 		printf("%d: ", gpio);
@@ -96,7 +97,8 @@ int set_gpio_dir(uint8_t gpio, uint8_t in_out)
 	int fd, ret = 0, w_res = 0;
 	char f_name[40] = {0};
 
-	snprintf(f_name, 40, "/sys/class/gpio/gpio%d/direction", gpio);
+	snprintf(f_name, sizeof(f_name), "/sys/class/gpio/gpio%d/direction",
+			gpio);
 
 	fd = open(f_name, O_WRONLY);
 	if (fd < 0) {
@@ -127,18 +129,17 @@ int gpio_get_val_fd(uint8_t gpio)
 	int ret, fd;
 	char f_name[40] = {0};
 
-	snprintf(f_name, 40, "/sys/class/gpio/gpio%d/value", gpio);
+	snprintf(f_name, sizeof(f_name), "/sys/class/gpio/gpio%d/value",
+			gpio);
 
 	fd = open(f_name, O_RDWR);
 	if (fd < 0) {
 		printf("%d: ", gpio);
 		perror("failed to get gpio value control");
 		ret = -1;
-		goto out;
 	} else
 		ret = fd;
 
-out:
 	return ret;
 }
 
@@ -147,7 +148,7 @@ int set_gpio_val_by_fd(int fd, uint8_t val)
 	int ret = 0;
 	char buf[2] = {0};
 
-	snprintf(buf, 2, "%d", val);
+	snprintf(buf, sizeof(buf), "%d", val);
 
 	if (write(fd, buf, strlen(buf)) < 0)
 		ret = 1;
@@ -173,7 +174,6 @@ int set_gpio_val(uint8_t gpio, uint8_t val)
 	}
 
 	close(fd);
-
 out:
 	return ret;
 }
