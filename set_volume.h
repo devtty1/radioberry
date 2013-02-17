@@ -18,8 +18,16 @@ struct volume_handle {
 	uint8_t max_vol_steps;
 };
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 int init_vol_control(struct volume_handle *vh);
 void close_vol_ctl(struct volume_handle *vh);
 int set_volume(struct volume_handle *vh);
+
+#ifdef __cplusplus
+ }
+#endif
 
 #endif

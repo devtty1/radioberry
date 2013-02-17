@@ -38,8 +38,16 @@ struct mpd_handle {
 	uint8_t max_tuner_pos;
 };
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 int init_mpd_handle(struct mpd_handle *m_handle);
 void close_mpd_handle(struct mpd_handle *m_handle);
 void update_song_info(struct mpd_handle *mh);
+
+#ifdef __cplusplus
+ }
+#endif
 
 #endif

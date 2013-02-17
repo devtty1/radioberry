@@ -44,6 +44,10 @@ struct extended_char {
 	unsigned char lcd_char[MAX_EXT_CHARS];
 };
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 void lcd_builtin_shift_screen(int direction);
 void lcd_clear_screen();
 void lcd_return_home();
@@ -55,5 +59,8 @@ void lcd_update_screen(struct lcd_handle *lh);
 int lcd_init();
 void lcd_close();
 
+#ifdef __cplusplus
+ }
+#endif
 
 #endif

@@ -40,8 +40,16 @@ struct mcp32xx_dev {
 	struct spidev_config dev_conf;
 };
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 uint32_t mcp32xx_get_val(struct mcp32xx_dev *mcp_dev, uint8_t channel_sel);
 uint8_t mcp32xx_init(struct mcp32xx_dev *mcp_dev);
 void mcp32xx_close(struct mcp32xx_dev *mcp_dev);
+
+#ifdef __cplusplus
+ }
+#endif
 
 #endif

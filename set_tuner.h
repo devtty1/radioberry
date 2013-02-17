@@ -23,7 +23,15 @@
 #include "config_ctl.h"
 #include "mpd_ctl.h"
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 int load_stations_playlist(struct mpd_handle *m_handle);
 int set_tuner(struct mpd_handle *m_handle);
+
+#ifdef __cplusplus
+ }
+#endif
 
 #endif

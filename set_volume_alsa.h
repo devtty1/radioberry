@@ -23,8 +23,16 @@
 #include "mcp32xx.h"
 #include "set_volume.h"
 
+#ifdef __cplusplus
+ extern "C" {
+#endif
+
 int init_alsa_control(struct volume_handle *vh);
 int set_alsa_master_volume(struct volume_handle *vh);
 void close_alsa_ctl(struct volume_handle *vh);
+
+#ifdef __cplusplus
+ }
+#endif
 
 #endif
