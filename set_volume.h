@@ -3,7 +3,6 @@
 
 #include <alsa/asoundlib.h>
 #include <alsa/mixer.h>
-#include "config_ctl.h"
 #include "mpd_ctl.h"
 
 struct volume_handle {

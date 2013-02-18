@@ -20,23 +20,29 @@
 #ifndef SET_LCD_CTL_H
 #define SET_LCD_CTL_H
 
-#include "config_ctl.h"
+#include <confuse.h>
 #include "gpio_base.h"
 
 #define LCD_SHIFT_R 1
 #define LCD_SHIFT_L 0
 
-#define BY_IDX 1
-#define BY_NR 0
+/* maximum length of fill patterns */
+#define MAX_FILL_LENGTH 8
+/* maximum of supported chars outside 7bit ASCII */
+#define MAX_EXT_CHARS 40
 
 struct lcd_handle {
-	char fline_buf[MAX_LINE_BUF + 1];
-	char sline_buf[MAX_LINE_BUF + 1];
+	char *fline_buf;
+	char *sline_buf;
 	uint8_t fline_idx;
 	uint8_t sline_idx;
 	uint8_t fline_update;
 	uint8_t sline_update;
 	uint8_t cline_scr;
+	uint8_t max_line_char;
+	uint8_t max_line_buf;
+
+	cfg_t *cfg;
 };
 
 struct extended_char {
@@ -56,8 +62,8 @@ void lcd_print_string(char* str);
 void lcd_move_cursor_down();
 void lcd_update_screen(struct lcd_handle *lh);
 
-int lcd_init();
-void lcd_close();
+int lcd_init(struct lcd_handle *lh);
+void lcd_close(struct lcd_handle *lh);
 
 #ifdef __cplusplus
  }

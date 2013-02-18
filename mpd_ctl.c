@@ -30,6 +30,8 @@
 #include "mcp32xx.h"
 #include "mpd_ctl.h"
 
+static uint8_t max_line_buf = 1;
+
 void status_changed(MpdObj *mi, ChangedStatusType what)
 {
 	if (what & MPD_CST_PLAYLIST )
@@ -39,8 +41,10 @@ void status_changed(MpdObj *mi, ChangedStatusType what)
 void error_callback(MpdObj *mi, int errorid, char *msg, struct mpd_handle *mh)
 {
 	printf("Error %i: '%s'\n", errorid, msg);
-	snprintf(mh->lh->fline_buf, MAX_LINE_CHAR, "Errorcode: %i", errorid);
-	snprintf(mh->lh->sline_buf, MAX_LINE_CHAR, "%s", msg);
+	snprintf(mh->lh->fline_buf, mh->lh->max_line_char,
+			"Errorcode: %i", errorid);
+	snprintf(mh->lh->sline_buf, mh->lh->max_line_char,
+			"%s", msg);
 	mh->lh->fline_update = 1;
 	mh->lh->sline_update = 1;
 }
@@ -49,8 +53,13 @@ void error_callback(MpdObj *mi, int errorid, char *msg, struct mpd_handle *mh)
  * the line buffer for the lcd display. */
 void update_song_info(struct mpd_handle *mh)
 {
-	char name[MAX_LINE_BUF + 1] = {0};
-	char title[MAX_LINE_BUF + 1] = {0};
+	char name[max_line_buf + 1];
+	char title[max_line_buf + 1];
+
+	/* mandatory to call memset here. We cannot use partial initialization
+	 * here since the compiler doesn't know the exact size at build time. */
+	memset(name, 0, (max_line_buf + 1) * sizeof(char));
+	memset(title, 0, (max_line_buf + 1) * sizeof(char));
 
 	/* mpd_playlist_get_current_song has a bug, so that in most case the
 	 * title will not be fetched while play stream. To work around this we
@@ -59,8 +68,10 @@ void update_song_info(struct mpd_handle *mh)
 			mpd_player_get_current_song_id(mh->mpd_obj));
 
 	if (mh->mpd_song == NULL) {
-		snprintf(mh->lh->fline_buf, MAX_LINE_CHAR, "Radioberry");
-		snprintf(mh->lh->sline_buf, MAX_LINE_CHAR, "Searching...");
+		snprintf(mh->lh->fline_buf, mh->lh->max_line_char,
+				"Radioberry");
+		snprintf(mh->lh->sline_buf, mh->lh->max_line_char,
+				"Searching...");
 		mh->lh->fline_update = 1;
 		mh->lh->sline_update = 1;
 
@@ -68,17 +79,17 @@ void update_song_info(struct mpd_handle *mh)
 	}
 
 	if (mh->mpd_song->name != NULL) {
-		strncpy(name, mh->mpd_song->name, MAX_LINE_BUF);
+		strncpy(name, mh->mpd_song->name, max_line_buf);
 
-		if (strlen(mh->mpd_song->name) > MAX_LINE_BUF)
-			name[MAX_LINE_BUF] = '\0';
+		if (strlen(mh->mpd_song->name) > max_line_buf)
+			name[max_line_buf] = '\0';
 	}
 
 	if (mh->mpd_song->title != NULL) {
-		strncpy(title, mh->mpd_song->title, MAX_LINE_BUF);
+		strncpy(title, mh->mpd_song->title, max_line_buf);
 
-		if (strlen(mh->mpd_song->title) > MAX_LINE_BUF)
-			title[MAX_LINE_BUF] = '\0';
+		if (strlen(mh->mpd_song->title) > max_line_buf)
+			title[max_line_buf] = '\0';
 	}
 
 #ifdef DEBUG
@@ -97,13 +108,13 @@ void update_song_info(struct mpd_handle *mh)
 	if (strcmp(mh->lh->fline_buf, name) != 0) {
 		mh->lh->fline_update = 1;
 		mh->lh->fline_idx = 0;
-		strncpy(mh->lh->fline_buf, name, MAX_LINE_BUF + 1);
+		strncpy(mh->lh->fline_buf, name, max_line_buf + 1);
 	}
 
 	if (strcmp(mh->lh->sline_buf, title) != 0) {
 		mh->lh->sline_update = 1;
 		mh->lh->sline_idx = 0;
-		strncpy(mh->lh->sline_buf, title, MAX_LINE_BUF + 1);
+		strncpy(mh->lh->sline_buf, title, max_line_buf + 1);
 	}
 }
 
@@ -112,9 +123,11 @@ int init_mpd_handle(struct mpd_handle *m_handle)
 	int ret = 0;
 
 	m_handle->raw_max = 1 << MCP32XX_MAX_BITS;
-	m_handle->max_tuner_pos = MAX_TUNER_POS;
-	m_handle->host = DEFAULT_HOST;
-	m_handle->port = DEFAULT_PORT;
+	m_handle->max_tuner_pos = (uint8_t) cfg_getint(m_handle->cfg,
+			"MaxTunerPos");
+	m_handle->host = cfg_getstr(m_handle->cfg, "HostName");
+	m_handle->port = cfg_getint(m_handle->cfg, "Port");
+	max_line_buf = m_handle->lh->max_line_buf;
 
 	printf("host %s, port %d\n", m_handle->host, m_handle->port);
 

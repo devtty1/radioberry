@@ -20,7 +20,6 @@
 #ifndef SET_TUNER_H
 #define SET_TUNER_H
 
-#include "config_ctl.h"
 #include "mpd_ctl.h"
 
 #ifdef __cplusplus

@@ -34,7 +34,7 @@
 int load_stations_playlist(struct mpd_handle *m_handle)
 {
 	int ret = 0;
-	const char* path = DEFAULT_PLS_NAME;
+	char* path = cfg_getstr(m_handle->cfg, "RadioPlaylistName");
 
 
 	ret = mpd_playlist_clear(m_handle->mpd_obj);

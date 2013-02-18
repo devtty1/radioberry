@@ -23,6 +23,9 @@
 #include "mcp32xx.h"
 #include "set_volume.h"
 
+/* maximum scales */
+#define MAX_VOL_STEPS 50
+
 #ifdef __cplusplus
  extern "C" {
 #endif

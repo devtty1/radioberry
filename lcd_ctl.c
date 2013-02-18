@@ -30,17 +30,29 @@
 
 #include "lcd_ctl.h"
 
-#define PIN(a) LCD_PIN_##a
 #define get_bit(ch, pos) ((ch >> pos) & 1)
-#define FILL_PATTERN1 " ** "
-#define FILL_PATTERN2 " ++ "
 
-static uint8_t pins[GPIO_PINS_USED] = {LCD_PIN_RS, LCD_PIN_E, LCD_PIN_DB4,
-	LCD_PIN_DB5, LCD_PIN_DB6, LCD_PIN_DB7};
+typedef enum lcd_pin_nr
+{
+	LCD_PIN_RS,
+	LCD_PIN_E,
+	LCD_PIN_DB4,
+	LCD_PIN_DB5,
+	LCD_PIN_DB6,
+	LCD_PIN_DB7,
+	GPIO_PINS_USED,
+} lcd_pin_nr_t;
+
+static uint8_t pins[GPIO_PINS_USED];
 
 static int gpio_val_fds[GPIO_PINS_USED];
 
 static uint8_t pins_disabled[GPIO_PINS_USED];
+
+static char fill_pattern_fl[MAX_FILL_LENGTH + 1];
+static char fill_pattern_sl[MAX_FILL_LENGTH + 1];
+
+static uint8_t max_line_char;
 
 static struct extended_char ext_char_tbl = {
 	/* These are German chars: ae, oe, ue, Ae, Oe, Ue, Sz */
@@ -65,27 +77,8 @@ static char inline decode_extended_char(unsigned char in_ch)
 	return out_ch;
 }
 
-static int inline _get_index(uint8_t *array, uint8_t val)
+static void inline _check_and_set_gpio(lcd_pin_nr_t idx, uint8_t val)
 {
-	int i;
-
-	for (i = 0; i < GPIO_PINS_USED; i++) {
-		if (array[i] == val)
-			return i;
-	}
-
-	return -1;
-}
-
-static void inline _check_and_set_gpio(uint8_t nr, uint8_t val, uint8_t mode)
-{
-	int idx;
-
-	if (mode == BY_NR)
-		idx = _get_index(pins, nr);
-	else
-		idx = nr;
-
 	if (! pins_disabled[idx]) {
 		pins_disabled[idx] = set_gpio_val_by_fd(gpio_val_fds[idx], val);
 
@@ -99,19 +92,19 @@ static void inline _lcd_clear_pins()
 {
 	/*TODO: supports 4bit interface only at time*/
 	if (GPIO_PINS_USED < 7) {
-		_check_and_set_gpio(PIN(DB4), 0, BY_NR);
-		_check_and_set_gpio(PIN(DB5), 0, BY_NR);
-		_check_and_set_gpio(PIN(DB6), 0, BY_NR);
-		_check_and_set_gpio(PIN(DB7), 0, BY_NR);
+		_check_and_set_gpio(LCD_PIN_DB4, 0);
+		_check_and_set_gpio(LCD_PIN_DB5, 0);
+		_check_and_set_gpio(LCD_PIN_DB6, 0);
+		_check_and_set_gpio(LCD_PIN_DB7, 0);
 	}
 }
 
 /* pulse Enable pin to switch to command mode */
 static void inline _lcd_send_cmd()
 {
-	_check_and_set_gpio(PIN(E), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_E, 1);
 	usleep(1000);
-	_check_and_set_gpio(PIN(E), 0, BY_NR);
+	_check_and_set_gpio(LCD_PIN_E, 0);
 	usleep(1000);
 }
 
@@ -125,11 +118,11 @@ static void inline scroll_buffer(char* l_buf, uint8_t *idx, char* line,
 	memcpy(lbuf_padded, l_buf, strlen(l_buf));
 	memcpy(lbuf_padded + strlen(l_buf), pad_pattern, strlen(pad_pattern));
 
-	if (remaining_chars > MAX_LINE_CHAR)
-		memcpy(line, lbuf_padded + *idx, MAX_LINE_CHAR);
+	if (remaining_chars > max_line_char)
+		memcpy(line, lbuf_padded + *idx, max_line_char);
 	else {
 		memcpy(line, lbuf_padded + *idx, remaining_chars);
-		memcpy(line + remaining_chars, lbuf_padded, MAX_LINE_CHAR
+		memcpy(line + remaining_chars, lbuf_padded, max_line_char
 				- remaining_chars);
 	}
 
@@ -143,7 +136,7 @@ static void init_lcd_pins()
 {
 	int i;
 
-	for (i = 0; i < (sizeof(pins)); i++) {
+	for (i = 0; i < GPIO_PINS_USED; i++) {
 		pins_disabled[i] = init_gpio(pins[i]);
 		if (pins_disabled[i])
 			continue;
@@ -165,7 +158,7 @@ static void init_lcd_pins()
 	}
 
 	/* make sure that RS Pin is low */
-	_check_and_set_gpio(PIN(RS), 0, BY_NR);
+	_check_and_set_gpio(LCD_PIN_RS, 0);
 }
 
 static void init_lcd_screen() {
@@ -174,8 +167,8 @@ static void init_lcd_screen() {
 	 * und 4 are set to 1 and enable pins will be pulsed four times. Timing
 	 * conditions are listed in the document mentioned above */
 	_lcd_clear_pins();
-	_check_and_set_gpio(PIN(DB5), 1, BY_NR);
-	_check_and_set_gpio(PIN(DB4), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB5, 1);
+	_check_and_set_gpio(LCD_PIN_DB4, 1);
 	_lcd_send_cmd();
 	usleep(4200);
 
@@ -188,17 +181,17 @@ static void init_lcd_screen() {
 	usleep(110);
 
 	/* Step 5 */
-	_check_and_set_gpio(PIN(DB4), 0, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB4, 0);
 	_lcd_send_cmd();
 	usleep(110);
 
 	/* Step 6, the function set instruction. DL/N/F is set here. DL = 0, N =
 	 * 1, F = 0 */
-	_check_and_set_gpio(PIN(DB5), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB5, 1);
 	_lcd_send_cmd();
 
 	_lcd_clear_pins();
-	_check_and_set_gpio(PIN(DB7), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB7, 1);
 	_lcd_send_cmd();
 	usleep(55);
 
@@ -207,7 +200,7 @@ static void init_lcd_screen() {
 	_lcd_clear_pins();
 	_lcd_send_cmd();
 
-	_check_and_set_gpio(PIN(DB7), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB7, 1);
 	_lcd_send_cmd();
 	usleep(55);
 
@@ -217,8 +210,8 @@ static void init_lcd_screen() {
 	/* Step 9, entry mode set I/D (DB5) and SH (DB4) here. */
 	_lcd_clear_pins();
 	_lcd_send_cmd();
-	_check_and_set_gpio(PIN(DB6), 1, BY_NR);
-	_check_and_set_gpio(PIN(DB5), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB6, 1);
+	_check_and_set_gpio(LCD_PIN_DB5, 1);
 
 	_lcd_send_cmd();
 	usleep(55);
@@ -228,30 +221,52 @@ static void init_lcd_screen() {
 	_lcd_clear_pins();
 	_lcd_send_cmd();
 
-	_check_and_set_gpio(PIN(DB7), 1, BY_NR);
-	_check_and_set_gpio(PIN(DB6), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB7, 1);
+	_check_and_set_gpio(LCD_PIN_DB6, 1);
 	_lcd_send_cmd();
 	usleep(55);
 }
 
-int lcd_init()
+int lcd_init(struct lcd_handle *lh)
 {
 	int i, ret = 0;
+
+	pins[LCD_PIN_RS] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_RS");
+	pins[LCD_PIN_E] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_E");
+	pins[LCD_PIN_DB4] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB4");
+	pins[LCD_PIN_DB5] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB5");
+	pins[LCD_PIN_DB6] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB6");
+	pins[LCD_PIN_DB7] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB7");
+
+	memcpy(fill_pattern_fl, cfg_getstr(lh->cfg, "FillPatternFirstLine"),
+			MAX_FILL_LENGTH);
+	memcpy(fill_pattern_sl, cfg_getstr(lh->cfg, "FillPatternSecondLine"),
+			MAX_FILL_LENGTH);
+
+	lh->max_line_buf = (uint8_t)cfg_getint(lh->cfg, "MaxLineBufferLength");
+	lh->fline_buf = calloc(lh->max_line_buf, sizeof(char));
+	lh->sline_buf = calloc(lh->max_line_buf, sizeof(char));
+
+	max_line_char = (uint8_t)cfg_getint(lh->cfg, "MaxLineLength");
+	lh->max_line_char = max_line_char;
 
 	init_lcd_pins();
 	init_lcd_screen();
 
-	for (i = 0; i < sizeof(pins); i++)
+	for (i = 0; i < GPIO_PINS_USED; i++)
 		ret |= pins_disabled[i];
 
 	return ret;
 }
 
-void lcd_close()
+void lcd_close(struct lcd_handle *lh)
 {
 	int i;
 
-	for (i = 0; i < sizeof(pins); i++) {
+	free(lh->fline_buf);
+	free(lh->sline_buf);
+
+	for (i = 0; i < GPIO_PINS_USED; i++) {
 		close(gpio_val_fds[i]);
 		close_gpio(pins[i]);
 	}
@@ -262,14 +277,14 @@ void lcd_builtin_shift_screen(int direction)
 {
 	_lcd_clear_pins();
 
-	_check_and_set_gpio(PIN(DB4), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB4, 1);
 
 	_lcd_send_cmd();
 
-	_check_and_set_gpio(PIN(DB7), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB7, 1);
 
 	if (direction == LCD_SHIFT_R)
-		_check_and_set_gpio(PIN(DB6), 1, BY_NR);
+		_check_and_set_gpio(LCD_PIN_DB6, 1);
 
 	_lcd_send_cmd();
 }
@@ -280,7 +295,7 @@ void lcd_clear_screen()
 
 	_lcd_send_cmd();
 
-	_check_and_set_gpio(PIN(DB4), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB4, 1);
 
 	_lcd_send_cmd();
 
@@ -293,7 +308,7 @@ void lcd_return_home()
 
 	_lcd_send_cmd();
 
-	_check_and_set_gpio(PIN(DB5), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB5, 1);
 
 	_lcd_send_cmd();
 
@@ -303,23 +318,23 @@ void lcd_return_home()
 void lcd_print_char(char ch) {
 	_lcd_clear_pins();
 
-	_check_and_set_gpio(PIN(RS), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_RS, 1);
 
-	_check_and_set_gpio(PIN(DB7), get_bit(ch, 7), BY_NR);
-	_check_and_set_gpio(PIN(DB6), get_bit(ch, 6), BY_NR);
-	_check_and_set_gpio(PIN(DB5), get_bit(ch, 5), BY_NR);
-	_check_and_set_gpio(PIN(DB4), get_bit(ch, 4), BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB7, get_bit(ch, 7));
+	_check_and_set_gpio(LCD_PIN_DB6, get_bit(ch, 6));
+	_check_and_set_gpio(LCD_PIN_DB5, get_bit(ch, 5));
+	_check_and_set_gpio(LCD_PIN_DB4, get_bit(ch, 4));
 	_lcd_send_cmd();
 
-	_check_and_set_gpio(PIN(DB7), get_bit(ch, 3), BY_NR);
-	_check_and_set_gpio(PIN(DB6), get_bit(ch, 2), BY_NR);
-	_check_and_set_gpio(PIN(DB5), get_bit(ch, 1), BY_NR);
-	_check_and_set_gpio(PIN(DB4), get_bit(ch, 0), BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB7, get_bit(ch, 3));
+	_check_and_set_gpio(LCD_PIN_DB6, get_bit(ch, 2));
+	_check_and_set_gpio(LCD_PIN_DB5, get_bit(ch, 1));
+	_check_and_set_gpio(LCD_PIN_DB4, get_bit(ch, 0));
 
 
 	_lcd_send_cmd();
 
-	_check_and_set_gpio(PIN(RS), 0, BY_NR);
+	_check_and_set_gpio(LCD_PIN_RS, 0);
 }
 
 void lcd_print_string(char* str)
@@ -353,8 +368,8 @@ void lcd_move_cursor_down() {
 	/* TODO: implement moving cursor to any DDRAM address. Now we only move
 	 * the cursor to 0x40, which is at the beginning of the second line for
 	 * a 2x16 hd44780 lcd */
-	_check_and_set_gpio(PIN(DB7), 1, BY_NR);
-	_check_and_set_gpio(PIN(DB6), 1, BY_NR);
+	_check_and_set_gpio(LCD_PIN_DB7, 1);
+	_check_and_set_gpio(LCD_PIN_DB6, 1);
 
 	_lcd_send_cmd();
 
@@ -364,33 +379,39 @@ void lcd_move_cursor_down() {
 }
 
 /* print 2 lines and scroll if necessary. Two ring buffers are used to store the
- * content with the length of exact MAX_LINE_CHAR (mostly 16) characters.
+ * content with the length of exact max_line_char (mostly 16) characters.
  */
 void lcd_update_screen(struct lcd_handle *lh)
 {
-	char f_line[MAX_LINE_CHAR + 1] = {0};
-	char s_line[MAX_LINE_CHAR + 1] = {0};
-	char empty_line[MAX_LINE_CHAR + 1] = {0};
+	char f_line[max_line_char + 1];
+	char s_line[max_line_char + 1];
+	char empty_line[max_line_char + 1];
+
+	/* mandatory to call memset here. We cannot use partial initialization
+	 * here since the compiler doesn't know the exact size at build time. */
+	memset(f_line, 0, (max_line_char + 1) * sizeof(char));
+	memset(s_line, 0, (max_line_char + 1) * sizeof(char));
+	memset(empty_line, 0, (max_line_char + 1) * sizeof(char));
 
 	uint8_t fl_bufsize = strlen(lh->fline_buf);
 	uint8_t sl_bufsize = strlen(lh->sline_buf);
 
 	uint8_t sline_scrolling = 0, fline_scrolling = 0, i;
 
-	for (i = 0; i < MAX_LINE_CHAR; i++)
+	for (i = 0; i < max_line_char; i++)
 		empty_line[i] = ' ';
 
-	if (fl_bufsize > MAX_LINE_CHAR) {
+	if (fl_bufsize > max_line_char) {
 		fline_scrolling = 1;
 		scroll_buffer(lh->fline_buf, &(lh->fline_idx), f_line,
-				FILL_PATTERN2);
+				fill_pattern_fl);
 	} else
 		memcpy(f_line, lh->fline_buf, fl_bufsize);
 
-	if (sl_bufsize > MAX_LINE_CHAR) {
+	if (sl_bufsize > max_line_char) {
 		sline_scrolling = 1;
 		scroll_buffer(lh->sline_buf, &(lh->sline_idx), s_line,
-				FILL_PATTERN1);
+				fill_pattern_sl);
 	} else
 		memcpy(s_line, lh->sline_buf, sl_bufsize);
 

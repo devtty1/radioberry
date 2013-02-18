@@ -22,7 +22,7 @@
 
 #include <libmpd-1.0/libmpd/libmpd.h>
 #include <libmpd-1.0/libmpd/debug_printf.h>
-#include "config_ctl.h"
+#include <confuse.h>
 #include "lcd_ctl.h"
 
 struct mpd_handle {
@@ -32,10 +32,12 @@ struct mpd_handle {
 	MpdObj *mpd_obj;
 	mpd_Song *mpd_song;
 	struct lcd_handle *lh;
+	cfg_t *cfg;
 
 	uint32_t tuner_raw_val;
 	uint32_t raw_max;
 	uint8_t max_tuner_pos;
+	uint8_t max_line_buf;
 };
 
 #ifdef __cplusplus
