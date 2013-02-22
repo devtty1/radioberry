@@ -30,7 +30,7 @@
 
 #include "gpio_base.h"
 
-int init_gpio(uint8_t gpio)
+int init_gpio(uint32_t gpio)
 {
 	int fd, ret = 0;
 	char buf[4] = {0};
@@ -65,7 +65,7 @@ out:
 	return ret;
 }
 
-int close_gpio(uint8_t gpio)
+int close_gpio(uint32_t gpio)
 {
 	int fd, ret = 0;
 	char buf[4] = {0};
@@ -92,7 +92,7 @@ out:
 	return ret;
 }
 
-int set_gpio_dir(uint8_t gpio, uint8_t in_out)
+int set_gpio_dir(uint32_t gpio, uint8_t in_out)
 {
 	int fd, ret = 0, w_res = 0;
 	char f_name[40] = {0};
@@ -124,7 +124,7 @@ out:
 	return ret;
 }
 
-int gpio_get_val_fd(uint8_t gpio)
+int gpio_get_val_fd(uint32_t gpio)
 {
 	int ret, fd;
 	char f_name[40] = {0};
@@ -156,7 +156,7 @@ int set_gpio_val_by_fd(int fd, uint8_t val)
 	return ret;
 }
 
-int set_gpio_val(uint8_t gpio, uint8_t val)
+int set_gpio_val(uint32_t gpio, uint8_t val)
 {
 	int fd, ret = 0;
 

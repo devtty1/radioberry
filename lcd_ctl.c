@@ -43,7 +43,7 @@ typedef enum lcd_pin_nr
 	GPIO_PINS_USED,
 } lcd_pin_nr_t;
 
-static uint8_t pins[GPIO_PINS_USED];
+static uint32_t pins[GPIO_PINS_USED];
 
 static int gpio_val_fds[GPIO_PINS_USED];
 
@@ -231,12 +231,12 @@ int lcd_init(struct lcd_handle *lh)
 {
 	int i, ret = 0;
 
-	pins[LCD_PIN_RS] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_RS");
-	pins[LCD_PIN_E] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_E");
-	pins[LCD_PIN_DB4] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB4");
-	pins[LCD_PIN_DB5] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB5");
-	pins[LCD_PIN_DB6] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB6");
-	pins[LCD_PIN_DB7] = (uint8_t)cfg_getint(lh->cfg, "LCD-Pin_DB7");
+	pins[LCD_PIN_RS] = (uint32_t)cfg_getint(lh->cfg, "LCD-Pin_RS");
+	pins[LCD_PIN_E] = (uint32_t)cfg_getint(lh->cfg, "LCD-Pin_E");
+	pins[LCD_PIN_DB4] = (uint32_t)cfg_getint(lh->cfg, "LCD-Pin_DB4");
+	pins[LCD_PIN_DB5] = (uint32_t)cfg_getint(lh->cfg, "LCD-Pin_DB5");
+	pins[LCD_PIN_DB6] = (uint32_t)cfg_getint(lh->cfg, "LCD-Pin_DB6");
+	pins[LCD_PIN_DB7] = (uint32_t)cfg_getint(lh->cfg, "LCD-Pin_DB7");
 
 	memcpy(fill_pattern_fl, cfg_getstr(lh->cfg, "FillPatternFirstLine"),
 			MAX_FILL_LENGTH);
