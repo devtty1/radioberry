@@ -89,7 +89,7 @@ int set_alsa_master_volume(struct volume_handle *vh)
 	uint percentage = (vh->vol_raw_val * 100 / vh->raw_max);
 	val = min + (percentage * (max - min) / 100);
 
-#if DEBUG
+#ifdef DEBUG
 	printf("Vol min %ld, max %ld, val %ld, raw_val %u raw_max %u\n",
 			min, max, val, vh->vol_raw_val, vh->raw_max);
 #endif

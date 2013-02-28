@@ -262,7 +262,7 @@ int main(int argc, const char *argv[])
 
 		diff = val_old[adc_channel] - val_cur[adc_channel];
 
-#if DEBUG
+#ifdef DEBUG
 		printf("adc_channel: %u, old %u, new %u, diff %d\n",
 				adc_channel, val_cur[adc_channel],
 			       	val_old[adc_channel], diff);
@@ -270,7 +270,7 @@ int main(int argc, const char *argv[])
 
 		if (abs(diff) < TOLERANT_THRESHOLD)
 			continue;
-#if DEBUG
+#ifdef DEBUG
 		if (diff > 0)
 			printf("Poti %u was turned left, current val: %d\n",
 				adc_channel + 1, val_cur[adc_channel]);
