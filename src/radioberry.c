@@ -48,9 +48,9 @@ static uint8_t volume_chan;
 static uint8_t tuner_chan;
 static uint8_t channel_used;
 
-void  sigint_handler(int sig)
+void  sigintterm_handler(int sig)
 {
-	printf("\n\n\nCtrl-C received, exiting test\n");
+	printf("\n\n\nExiting Radioberry\n");
 	running = 0;
 }
 
@@ -168,7 +168,8 @@ int main(int argc, const char *argv[])
 	m_handle.cfg = cfg;
 	l_handle.cfg = cfg;
 
-	signal(SIGINT, sigint_handler);
+	signal(SIGINT, sigintterm_handler);
+	signal(SIGTERM, sigintterm_handler);
 
 	ret = lcd_init(&l_handle);
 	if (ret) {
