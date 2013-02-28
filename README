@@ -21,5 +21,7 @@ This application needs root privileg to run.
 For informations on compiling and installation, please refer to the INSTALL
 file.
 
+For known issues and planned enhancements, please refer to the TODO file.
+
 This application is developed and tested on a Raspberry board. However it
 should run on any embedded machin with SPI and GPIO interfaces.

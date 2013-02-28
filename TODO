@@ -1,3 +1,12 @@
+==radioberry
+
+FIXME!!:
+* fix crash while loaded first time after system starts up. This is strange and
+  seems to be no timing issue, since delays didn't help. The issue is in libmpd
+  and needs more investigation. In the mean time just start the application two
+  times after start up..... ;-)
+
+Enhancements:
 * add configuration interface, make stuffs runtime-configurable by a
   configuration file
 * fix alsa control interface. acutally a toolchain issues since we can't use any
