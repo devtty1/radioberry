@@ -1,4 +1,4 @@
-AC_INIT([radioberry], [0.0.0], [devtty0@gmail.com], [radioberry])
+AC_INIT([radioberry], [0.0.1], [devtty0@gmail.com], [radioberry])
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE(no-dist-gzip dist-bzip2)
 

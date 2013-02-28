@@ -1,2 +1,4 @@
-2013-02-25:
-	* Project start
+2013-02-28:
+	* 0.01 released with a minor issue: The application crashes on first
+	  time starting after system starts up. You have to load it two times.
+	  Afterwards it works all right.

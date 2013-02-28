@@ -1,2 +1,341 @@
-2013-02-25 Luotao Fu <devtty0@gmail.com>
-	* ChangeLog start
+commit ce6404b45aea8f7f055dc64ee9d8bbec42fdb046
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 28 13:28:42 2013 +0100
+
+    added known issue documenation and hints to this
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit 77f814a8c5c503ca1a6af4c7d4f57a51362617ea
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 28 13:24:33 2013 +0100
+
+    fixed DEBUG flag
+    
+    use DEBUG flag in the same way in all files. We can now use -DDBUG in the
+    compile flag to enable debuggin in compiletime.
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit 36cb541bd36c550210c0e62fcc86f21fefc3a90a
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 28 12:14:30 2013 +0100
+
+    use also SIGTERM to terminate the super loop
+    
+    currently only the SIGINT is used to terminate the mainloop. Added SIGTERM to
+    the signal handler so that we can use common start-stop-daemon to control the
+    application without having to use extra signal parameters.
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit d59303423d0daf9e7d829081ed37e1de9b822b28
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 28 11:58:09 2013 +0100
+
+    add install instruction and sample playlist
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit cd901b3ea716c4803f77b16b41bb1d5ff9d51dd5
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 28 10:30:55 2013 +0100
+
+    Switch to autoconf
+    
+    finally got ridden of ugly handmade Makefiles and switched to autoconf. We need
+    a bunch of new files for this now. However we now have autmated package
+    building, scripted depedency-checking, parameter controlled cross-compiling
+    stuff etc., all kind of goodies one might need or (mostly) not... ;-)
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit 39486d00f71b2087dd4cb1c90d2fa20b40e1ca91
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Fri Feb 22 23:42:58 2013 +0100
+
+    Update README info.
+    
+    add some details about intention of this application and informations about
+    dependencies
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit 73f0a15ef17efb0740bb08b85adf58ffe48b300f
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Fri Feb 22 23:24:23 2013 +0100
+
+    use 32bit unsigned int instead of 8bit for gpio
+    
+    Some platforms might have high number for gpio lines, which would extend the
+    limit of 255 of uint8, so we switch to uint32 for gpio numbers.
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit 0d66d790abe593c979e3e505e1ccb83154e3cd0c
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Mon Feb 18 22:18:21 2013 +0100
+
+    make runtime configuration possible runtime
+    
+    We use now libconfuse to read several configuration values and configure the
+    stuffs in run time. Threw out the now obsolete config_ctl.h file. One side
+    effect is that we cannot use partial initialization all over the place now.
+    Instead we have to call memset to fill the arrays with 0 upon initializing.
+    Further we have to dynamically allocate some arrays. Fortunatelly most stuffs
+    are called while starting up, so there shall be no big performance impacts.
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit 25f6cbe1858415d2034f733f629ed3a87689d816
+Author: Roland RooL Lang <me@RooL.at>
+Date:   Sun Feb 17 13:06:23 2013 +0100
+
+    Added c++ compatibility to use the lib in c++-projects
+    
+    Signed-off-by: Luotao Fu <devtty0@gmail.com>
+
+commit 1e4dc6b6eb5bbc99444a8ce348124897eaf0d1c0
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 13 22:40:38 2013 +0100
+
+    improved error handling
+    
+    print status and error message to the screen. This is useful especially in
+    i-radio mode if station cannot be found.
+
+commit ba8d2570f0ec49606612422870e667263c78961a
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 13 22:38:41 2013 +0100
+
+    improved second line printing
+    
+    clear second line first when sline_update is detected. This prevents that
+    sometimes chars from previous content is shown if the new content happens to be
+    shorter than the old one.
+
+commit 58a83e1a588f781a742b96cfd57c2e051405778d
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 13 19:57:43 2013 +0100
+
+    make scrolling little fancier
+    
+    * scroll first line too, if necessary.
+    * make padding pattern configurable. defined two default padding patterns
+
+commit 4cedcdb3f4564c17efecbb89f9f0824a243b72f0
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 13 19:35:30 2013 +0100
+
+    some janitoring stuff
+    
+    * cleaning up code, remove senseless stuffs.
+    * don't stop while scrolling back to the beginning
+
+commit 72aef7fd7ce3785d4462637b60088f8096e88ec7
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Tue Feb 12 20:56:16 2013 +0100
+
+    fixed wrong error handling while failed to retrieve station
+
+commit 86ba22e069dc59654713c0250343a51490bc9095
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Tue Feb 12 20:53:52 2013 +0100
+
+    move line scrolling in a separated function
+    
+    Separate the line scrolling callback in an extra function so that we can reused
+    it to every given line. Since we fixed the screen flickering issue. This is
+    needed as preparation for scrolling both, or later 4 lines.
+
+commit 2fbc4ac819632ac6aa76f8fe436054e27000f63d
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Mon Feb 11 21:24:17 2013 +0100
+
+    improvement of printing screen
+    
+    * fill the end of buffer with buildtime configurable fill patterns.
+    * Begin filling after printing the last character in the old buffer.
+    * don't scroll if line < 16
+
+commit f44321736646e21382c8619bad984fc53431e521
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Mon Feb 11 21:20:35 2013 +0100
+
+    compare song information with stored line
+    
+    it's unneccessary to fetch name and title from old mpd_song. Actually the
+    information is stored in the fline and sline buffer. Comparing the new song
+    information with the line buffers now. This way we can also fill the lines with
+    other information, while the content will be refreshed automatically.
+
+commit 213455943917ddf65ee7d2eaa56b02bf86242571
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Mon Feb 11 20:57:36 2013 +0100
+
+    handle tuner control return status
+    
+    don't disable tuner control when the initialization failed because of e.g.
+    connection problem. We should give it a second try
+
+commit 3d6d38a75c1567ebd3cfc6eabd728571fdc41abe
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Mon Feb 11 20:57:16 2013 +0100
+
+    minor format fixing
+
+commit b5fada4a9e4efea329e6b60fe7b13552f7151bc8
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Sun Feb 10 21:09:08 2013 +0100
+
+    call mpd statu update in loop
+
+commit 396b481c796450519d295025187fdbc1a67746fb
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Sun Feb 10 21:06:12 2013 +0100
+
+    added special character handling
+    
+    some dirty hack to handle some german characters. This only works, if the
+    character is encoded in UTF-8 Multibyte. The callback is extendable, but only
+    for U+00C0 till U+00FF)
+
+commit 214f2131a58b87e1ae807d260250b4f244602338
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Sun Feb 10 21:04:23 2013 +0100
+
+    added libmpd based error callback
+
+commit f6cb43747591ddf691e7ddab38110c1e75938584
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Sun Feb 10 20:57:16 2013 +0100
+
+    Fixed offby one, fixed handling for song==NULL
+    
+    when the name > 80 we append the last byte of buffer with '\0'. However the name
+    and title buffer are declared with 80 byte long. The intrestin effect is than
+    that when we try to write to new_name[80], the software doesn't segfault,
+    instead it writes the null termination into old_title[0], which is place just
+    after new_name[79] on the stack. This is a stupid off-by-one error, which
+    revealed some really interesting stuff.
+    
+    Also clear the display buffer if we failed to retrieve a song. This prevents
+    segfaults when we failed to connect to a station.
+
+commit 750415ece2f8120ac21f7711ad0bf6e060c64353
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Sat Feb 9 18:01:25 2013 +0100
+
+    centralize configurable stuffs
+    
+    collected all configurable stuffs in one configuration file. This time we still
+    do buildtime configuration. This is a preparation for a runtime configuration
+    interface.
+
+commit 8a5971e7d8d59db4ef678d397b5d79ee2c33da3d
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Sat Feb 9 16:59:45 2013 +0100
+
+    Fixed station search and load callbacks
+    
+    * clear internal playlist upon starting, otherwise the playlist grows every
+      time we start.
+    * decend search position hen no station can be found at requested pos.
+    * fixed debug print.
+
+commit 2d381f8a79333251f408420ce38c6836a42ffeb4
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Sat Feb 9 16:53:09 2013 +0100
+
+    improved initialization procedure
+    
+    * process value doesn't retunr != 0 any more if some control flag was disabled
+    * check if we can set tuner at start, quit if now since otherwise we might run
+      segfault.
+    * don't quit if we can't initialize the ADC, just disable the analog devices
+      instead.
+    * fixed some error messages.
+
+commit dedced10e9e12aa03e9b5b1c5c22fac6435d34b5
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 7 22:51:35 2013 +0100
+
+    minor changes in the main loop
+    
+    make loop intervals build-time configurable. update lcd only if lcd control
+    enabled, also add some comments.
+
+commit 5dc9fec3b1a2c644d2aea468a5349aa5119c86a0
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 7 22:27:52 2013 +0100
+
+    split set_gpio_val callback
+    
+    Especially for controlling the lcd, where we are toggling different gpio lines
+    hundreds of times in a second. It's better to keep the fd of the GPIO valud
+    entry around, instead of calling open/close every time when we want to access a
+    GPIO line. Hence the set_gpio_val callback is splitted into set_gpio_val_by_fd
+    and gpio_get_val_fd, which can be called independently. Also made change in the
+    lcd callback to make use of the new callbacks. An array of fds needs to be
+    created, some addition to close_lcd routine, nothing complicated.
+
+commit 06fa27c691cb0f02d74afb9ca6e93c5d5aa545d5
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 7 22:25:26 2013 +0100
+
+    use snprintf instead sprintf
+    
+    the maximum sysfs file path will be limited to 40, which is more than enough.
+    GPIO number is now limited to < 999, GPIO value limited to < 9.
+
+commit 80783961a61bdaea2d79aa943ebcb9ee1340d71e
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Thu Feb 7 22:22:22 2013 +0100
+
+    added linux kernel style .gitignore file
+    
+    because the default github .gitignore file sucks.
+
+commit 347683117ad64ba098e24ba74de6934a6fe0f2b1
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 6 22:48:28 2013 +0100
+
+    endless scrolling lcd screen
+    
+    implemented ring buffer to do endless scrolling, also removed whitespaces.
+    Contains some ugly hacks and the wrap around is still hoppy, works all right
+    though.
+
+commit bbae029a946db6075b3970a2c516b85a1fbef950
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 6 22:46:19 2013 +0100
+
+    Die trailing white spaces die
+    
+    removed trailing whitspaces
+
+commit 50bdeb7a54a32829000316f24f429e26616efdbb
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 6 22:28:54 2013 +0100
+
+    removed unneccessary memsets.
+    
+    use partial initialization to initialize the char arrays, no need to use memset
+
+commit 7c5691a054d17efb86b7d9aefd0e7240a8e7eed2
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Wed Feb 6 19:59:08 2013 +0100
+
+    added TODO
+
+commit 4f707a8df0aa5bd10118af481dc4e24482b04c30
+Author: Luotao Fu <devtty0@gmail.com>
+Date:   Tue Feb 5 23:00:01 2013 +0100
+
+    initial commit
+
+commit 1e73d0180d35d05a5b8b26b4d2b1a48ef18e5b7d
+Author: devtty1 <devtty0@gmail.com>
+Date:   Tue Feb 5 00:26:03 2013 -0800
+
+    Initial commit
