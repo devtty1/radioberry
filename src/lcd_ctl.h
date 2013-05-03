@@ -41,6 +41,8 @@ struct lcd_handle {
 	uint8_t cline_scr;
 	uint8_t max_line_char;
 	uint8_t max_line_buf;
+	uint8_t wait_cycle;
+	uint8_t cancel_wait;
 
 	cfg_t *cfg;
 };

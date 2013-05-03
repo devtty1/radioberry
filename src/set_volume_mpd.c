@@ -42,14 +42,12 @@ int init_mpd_volume(struct volume_handle *vh)
 
 int set_mpd_volume(struct volume_handle *vh)
 {
-	int ret = 0;
 	int cur_vol;
 	uint percentage;
 
 	cur_vol = mpd_status_get_volume(vh->mh->mpd_obj);
 	if (cur_vol < 0) {
 		printf("failed to get current volume through mpd: %d\n", cur_vol);
-		ret = 1;
 		goto out;
 	}
 
@@ -60,11 +58,9 @@ int set_mpd_volume(struct volume_handle *vh)
 			percentage, vh->vol_raw_val, vh->raw_max);
 #endif
 	cur_vol = mpd_status_set_volume(vh->mh->mpd_obj, percentage);
-	if (cur_vol != percentage) {
+	if (cur_vol != percentage)
 		printf("failed to set current volume through mpd\n");
-		ret = 1;
-	}
 
 out:
-	return ret;
+	return cur_vol;
 }

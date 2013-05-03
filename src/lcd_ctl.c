@@ -398,6 +398,17 @@ void lcd_update_screen(struct lcd_handle *lh)
 
 	uint8_t sline_scrolling = 0, fline_scrolling = 0, i;
 
+	/* skip update screen if waiting cycle is not completed and waiting
+	 * shall not be interrupted */
+	if (lh->cancel_wait != 1 && lh->wait_cycle > 0) {
+		lh->wait_cycle--;
+		return;
+	}
+
+	/* clear flag for canceling wait */
+	if (lh->cancel_wait != 0)
+		lh->cancel_wait = 0;
+
 	for (i = 0; i < max_line_char; i++)
 		empty_line[i] = ' ';
 
