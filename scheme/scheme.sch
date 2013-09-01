@@ -1,0 +1,584 @@
+EESchema Schematic File Version 2  date Sun 01 Sep 2013 11:57:23 AM CEST
+LIBS:power
+LIBS:device
+LIBS:transistors
+LIBS:conn
+LIBS:linear
+LIBS:regul
+LIBS:74xx
+LIBS:cmos4000
+LIBS:adc-dac
+LIBS:memory
+LIBS:xilinx
+LIBS:special
+LIBS:microcontrollers
+LIBS:dsp
+LIBS:microchip
+LIBS:analog_switches
+LIBS:motorola
+LIBS:texas
+LIBS:intel
+LIBS:audio
+LIBS:interface
+LIBS:digital-audio
+LIBS:philips
+LIBS:display
+LIBS:cypress
+LIBS:siliconi
+LIBS:opto
+LIBS:atmel
+LIBS:contrib
+LIBS:valves
+LIBS:mcp-adc
+LIBS:display_lcd
+LIBS:IC_raspberry
+LIBS:diy_transformers
+LIBS:diy_connectors
+LIBS:diy_ics
+LIBS:diy_amp
+LIBS:diy_switches
+LIBS:scheme-cache
+EELAYER 25  0
+EELAYER END
+$Descr A4 11700 8267
+encoding utf-8
+Sheet 1 1
+Title "Radioberry"
+Date "1 sep 2013"
+Rev "A"
+Comp ""
+Comment1 ""
+Comment2 ""
+Comment3 ""
+Comment4 ""
+$EndDescr
+Connection ~ 4900 2700
+Wire Wire Line
+	4900 2700 4900 5400
+Wire Wire Line
+	4900 5400 3400 5400
+Connection ~ 5000 2700
+Wire Wire Line
+	3700 2700 3900 2700
+Wire Wire Line
+	3900 2700 4400 2700
+Wire Wire Line
+	4400 2700 4500 2700
+Wire Wire Line
+	4500 2700 4900 2700
+Wire Wire Line
+	4900 2700 5000 2700
+Wire Wire Line
+	5000 2700 5100 2700
+Wire Wire Line
+	5100 2700 5100 6600
+Wire Wire Line
+	3400 5400 3400 6250
+Connection ~ 5400 2500
+Wire Wire Line
+	5600 3700 5600 3500
+Wire Wire Line
+	5600 3500 4700 3500
+Wire Wire Line
+	4700 3500 4700 4300
+Wire Wire Line
+	4700 4300 2300 4300
+Wire Wire Line
+	2300 4300 2300 2800
+Wire Wire Line
+	2300 2800 2400 2800
+Connection ~ 4600 2500
+Wire Wire Line
+	6100 3600 6100 2500
+Wire Wire Line
+	6100 2500 5400 2500
+Wire Wire Line
+	5400 2500 4600 2500
+Wire Wire Line
+	4600 2500 3700 2500
+Wire Wire Line
+	8300 5500 8300 6000
+Wire Wire Line
+	3900 2700 3900 5100
+Connection ~ 1900 2500
+Wire Wire Line
+	2400 2500 1900 2500
+Wire Wire Line
+	1900 2500 1300 2500
+Wire Wire Line
+	1300 2500 1100 2500
+Wire Wire Line
+	1100 2500 750  2500
+Wire Wire Line
+	2900 6250 2900 7000
+Wire Wire Line
+	2900 7000 2800 7000
+Wire Wire Line
+	4600 2500 4600 6900
+Wire Wire Line
+	4600 6900 9600 6900
+Wire Wire Line
+	9600 6900 9600 5500
+Wire Wire Line
+	5400 4700 5400 4800
+Wire Wire Line
+	9500 5500 9500 6800
+Wire Wire Line
+	9500 6800 4700 6800
+Wire Wire Line
+	4700 6800 4700 4450
+Wire Wire Line
+	4700 4450 5250 4450
+Wire Wire Line
+	5400 4800 4400 4800
+Wire Wire Line
+	9300 5500 9300 6600
+Wire Wire Line
+	8700 5500 8700 6400
+Wire Wire Line
+	8700 6400 4100 6400
+Wire Wire Line
+	4100 6400 4100 3200
+Wire Wire Line
+	4100 3200 3700 3200
+Wire Wire Line
+	8500 5500 8500 6200
+Wire Wire Line
+	8500 6200 3600 6200
+Wire Wire Line
+	3600 6200 3600 4800
+Wire Wire Line
+	3600 4800 1700 4800
+Wire Wire Line
+	1700 4800 1700 3100
+Wire Wire Line
+	1700 3100 2400 3100
+Connection ~ 2900 6250
+Wire Wire Line
+	1700 6100 1500 6100
+Wire Wire Line
+	1500 6100 1500 4850
+Wire Wire Line
+	1500 4850 1450 4850
+Wire Wire Line
+	2800 6400 3000 6400
+Wire Wire Line
+	3000 6400 3000 4600
+Wire Wire Line
+	3000 4600 2200 4600
+Wire Wire Line
+	2200 4600 2200 3600
+Wire Wire Line
+	2200 3600 2400 3600
+Wire Wire Line
+	2800 6700 3300 6700
+Wire Wire Line
+	3100 4400 1900 4400
+Connection ~ 1300 5100
+Wire Wire Line
+	3900 5100 1300 5100
+Wire Wire Line
+	1300 5100 750  5100
+Wire Wire Line
+	750  5100 750  4500
+Connection ~ 1100 2500
+Wire Wire Line
+	1100 4100 1100 2500
+Wire Wire Line
+	1700 5950 900  5950
+Wire Wire Line
+	900  5950 900  4250
+Connection ~ 1300 2500
+Wire Wire Line
+	750  2500 750  4000
+Wire Wire Line
+	1300 2500 1300 4600
+Wire Wire Line
+	7150 1400 7150 1550
+Wire Wire Line
+	8150 1350 7750 1350
+Wire Wire Line
+	7750 1350 7750 800 
+Wire Wire Line
+	7750 800  7150 800 
+Wire Wire Line
+	7150 800  7100 800 
+Wire Wire Line
+	10150 1850 10150 1800
+Wire Wire Line
+	10150 1800 9400 1800
+Wire Wire Line
+	9400 1650 10150 1650
+Wire Wire Line
+	10150 850  9800 850 
+Wire Wire Line
+	9800 850  9800 1100
+Wire Wire Line
+	9800 1100 9400 1100
+Wire Wire Line
+	8100 1200 7650 1200
+Wire Wire Line
+	7650 1200 7650 2600
+Wire Wire Line
+	7650 2600 7100 2600
+Wire Wire Line
+	8100 1000 7900 1000
+Wire Wire Line
+	7900 1000 7900 2400
+Connection ~ 5300 800 
+Wire Wire Line
+	5300 950  5300 800 
+Wire Wire Line
+	4550 750  4550 650 
+Wire Wire Line
+	4550 650  4750 650 
+Wire Wire Line
+	5300 1350 4750 1350
+Wire Wire Line
+	4750 1500 8150 1500
+Connection ~ 4750 1350
+Wire Wire Line
+	7100 2400 7900 2400
+Wire Wire Line
+	7900 2400 8000 2400
+Wire Wire Line
+	8000 2400 8000 1900
+Wire Wire Line
+	8000 1900 8100 1900
+Connection ~ 7900 2400
+Wire Wire Line
+	7100 2700 7800 2700
+Wire Wire Line
+	7800 2700 7800 1700
+Wire Wire Line
+	7800 1700 8100 1700
+Wire Wire Line
+	9400 1250 10000 1250
+Wire Wire Line
+	10000 1250 10000 1050
+Wire Wire Line
+	10000 1050 10150 1050
+Wire Wire Line
+	6100 800  5300 800 
+Wire Wire Line
+	5300 800  4900 800 
+Wire Wire Line
+	7150 1000 7150 800 
+Connection ~ 7150 800 
+Wire Wire Line
+	7150 2050 4750 2050
+Wire Wire Line
+	4750 2050 4750 1500
+Wire Wire Line
+	4750 1500 4750 1350
+Wire Wire Line
+	4750 1350 4750 650 
+Connection ~ 4750 1500
+Wire Wire Line
+	1100 4500 1100 5300
+Wire Wire Line
+	1100 5300 4000 5300
+Wire Wire Line
+	4000 5300 4000 3000
+Wire Wire Line
+	2800 5950 2900 5950
+Wire Wire Line
+	2900 5950 3100 5950
+Wire Wire Line
+	3100 5950 3100 4400
+Connection ~ 2900 5950
+Wire Wire Line
+	3300 6700 3300 4500
+Wire Wire Line
+	3300 4500 2000 4500
+Wire Wire Line
+	2000 4500 2000 3400
+Wire Wire Line
+	2000 3400 2400 3400
+Wire Wire Line
+	2400 3500 2100 3500
+Wire Wire Line
+	2100 3500 2100 5200
+Wire Wire Line
+	2100 5200 3200 5200
+Wire Wire Line
+	3200 5200 3200 6550
+Wire Wire Line
+	3200 6550 2800 6550
+Wire Wire Line
+	3700 3600 3800 3600
+Wire Wire Line
+	3800 3600 3800 6850
+Wire Wire Line
+	3800 6850 2800 6850
+Wire Wire Line
+	3400 6250 2900 6250
+Wire Wire Line
+	2900 6250 2800 6250
+Wire Wire Line
+	8400 5500 8400 6100
+Wire Wire Line
+	8400 6100 3500 6100
+Wire Wire Line
+	3500 6100 3500 4700
+Wire Wire Line
+	3500 4700 1800 4700
+Wire Wire Line
+	1800 4700 1800 3200
+Wire Wire Line
+	1800 3200 2400 3200
+Wire Wire Line
+	2400 3000 1600 3000
+Wire Wire Line
+	1600 3000 1600 4900
+Wire Wire Line
+	1600 4900 3700 4900
+Wire Wire Line
+	3700 4900 3700 6300
+Wire Wire Line
+	3700 6300 8600 6300
+Wire Wire Line
+	8600 6300 8600 5500
+Wire Wire Line
+	3700 3500 4200 3500
+Wire Wire Line
+	4200 3500 4200 6700
+Wire Wire Line
+	4200 6700 9400 6700
+Wire Wire Line
+	9400 6700 9400 5500
+Wire Wire Line
+	9200 5500 9200 6500
+Wire Wire Line
+	9200 6500 4300 6500
+Wire Wire Line
+	4300 6500 4300 3300
+Wire Wire Line
+	4300 3300 3700 3300
+Wire Wire Line
+	5400 2500 5400 4200
+Wire Wire Line
+	4500 2700 4500 7000
+Connection ~ 4500 2700
+Wire Wire Line
+	4500 7000 9700 7000
+Wire Wire Line
+	9700 7000 9700 5500
+Wire Wire Line
+	2800 6100 2900 6100
+Wire Wire Line
+	2900 6100 2900 5950
+Wire Wire Line
+	1900 4400 1900 2500
+Connection ~ 3900 2700
+Wire Wire Line
+	8300 6000 4800 6000
+Wire Wire Line
+	4800 6000 4800 4900
+Wire Wire Line
+	4800 4900 6100 4900
+Wire Wire Line
+	6100 4900 6100 4700
+Wire Wire Line
+	6100 4100 6100 4300
+Wire Wire Line
+	5600 4200 5600 4500
+Wire Wire Line
+	5600 4500 5800 4500
+Wire Wire Line
+	8200 5500 8200 5900
+Wire Wire Line
+	8200 5900 5000 5900
+Wire Wire Line
+	5000 5900 5000 5400
+Wire Wire Line
+	5000 5400 5000 2700
+Wire Wire Line
+	4000 3000 3700 3000
+Wire Wire Line
+	9300 6600 5100 6600
+Wire Wire Line
+	4400 4800 4400 2700
+Connection ~ 4400 2700
+$Comp
+L PBD-26 Connector
+U 1 1 52230884
+P 3050 3100
+F 0 "Connector" H 3050 3800 50  0000 C CNN
+F 1 "Raspberry Pi" V 3050 3100 50  0000 C CNN
+	1    3050 3100
+	1    0    0    -1  
+$EndComp
+$Comp
+L DISPLAY_HD44780 LCD
+U 1 1 521B8744
+P 8950 5150
+F 0 "LCD" H 9650 5500 60  0000 C CNN
+F 1 "Display_hd44780_compat" H 8700 5500 60  0000 C CNN
+	1    8950 5150
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R
+U 1 1 521B81D1
+P 5600 3950
+F 0 "R" V 5680 3950 42  0000 C CNN
+F 1 "4.5K Ohm" V 5600 3950 42  0000 C CNN
+	1    5600 3950
+	1    0    0    -1  
+$EndComp
+$Comp
+L R R
+U 1 1 521B8064
+P 6100 3850
+F 0 "R" V 6180 3850 42  0000 C CNN
+F 1 "6 Ohm" V 6100 3850 42  0000 C CNN
+	1    6100 3850
+	1    0    0    -1  
+$EndComp
+$Comp
+L POT POT3
+U 1 1 521B6E87
+P 5400 4450
+F 0 "POT3" H 5400 4350 42  0000 C CNN
+F 1 "10K Ohm" H 5400 4450 42  0000 C CNN
+	1    5400 4450
+	0    -1   -1   0   
+$EndComp
+$Comp
+L 3PST Builtin
+U 0 1 521B62CC
+P 1100 4300
+F 0 "Builtin" H 1100 4400 42  0000 C CNN
+F 1 "On / Off" H 1100 4200 42  0000 C CNN
+	0    1100 4300
+	0    -1   -1   0   
+$EndComp
+$Comp
+L R R
+U 1 1 521B2B68
+P 7150 1800
+F 0 "R" V 7230 1800 50  0000 C CNN
+F 1 "500 Ohm" V 7150 1800 42  0000 C CNN
+	1    7150 1800
+	1    0    0    -1  
+$EndComp
+$Comp
+L LED LED
+U 1 1 521B28CE
+P 7150 1200
+F 0 "LED" H 7150 1300 50  0000 C CNN
+F 1 "2.2 V / 20 mA" H 7150 1100 38  0000 C CNN
+	1    7150 1200
+	0    1    1    0   
+$EndComp
+$Comp
+L SPST SW
+U 1 1 521B2863
+P 6600 800
+F 0 "SW" H 6600 900 50  0000 C CNN
+F 1 "on / off" H 6600 700 50  0000 C CNN
+	1    6600 800 
+	1    0    0    -1  
+$EndComp
+$Comp
+L JACK_STEREO audio_out
+U 1 1 521A0140
+P 6750 2550
+F 0 "audio_out" H 6900 2300 50  0000 R CNN
+F 1 "JACK_STEREO" H 6750 2800 50  0000 C CNN
+	1    6750 2550
+	1    0    0    -1  
+$EndComp
+$Comp
+L 2x10W_Stereo_Amplifier TDA1519
+U 1 1 521A0122
+P 8800 1450
+F 0 "TDA1519" H 8800 2050 60  0000 C CNN
+F 1 "2x10W_Stereo_Amplifier" H 8750 2250 48  0000 C CNN
+	1    8800 1450
+	1    0    0    -1  
+$EndComp
+$Comp
+L GND #PWR?
+U 1 1 5219F026
+P 4550 750
+F 0 "#PWR?" H 4550 750 30  0001 C CNN
+F 1 "GND" H 4550 680 30  0001 C CNN
+	1    4550 750 
+	1    0    0    -1  
+$EndComp
+$Comp
+L +12V #PWR?
+U 1 1 5219F01C
+P 4900 800
+F 0 "#PWR?" H 4900 750 20  0001 C CNN
+F 1 "+12V" H 4900 900 30  0000 C CNN
+	1    4900 800 
+	1    0    0    -1  
+$EndComp
+$Comp
+L TRANSFO Trafo
+U 1 1 5219EFE1
+P 5700 1150
+F 0 "Trafo" H 5700 1400 50  0000 C CNN
+F 1 "DC/DC 12 V to 5 V" H 5700 850 50  0000 C CNN
+	1    5700 1150
+	1    0    0    -1  
+$EndComp
+$Comp
+L SPEAKER SP1
+U 1 1 5219E088
+P 10450 950
+F 0 "SP1" H 10350 1200 50  0000 C CNN
+F 1 "SPEAKER" H 10350 700 70  0000 C CNN
+	1    10450 950 
+	1    0    0    -1  
+$EndComp
+$Comp
+L SPEAKER SP2
+U 1 1 5219E082
+P 10450 1750
+F 0 "SP2" H 10350 2000 50  0000 C CNN
+F 1 "SPEAKER" H 10350 1500 70  0000 C CNN
+	1    10450 1750
+	1    0    0    -1  
+$EndComp
+$Comp
+L POT POT2
+U 1 1 5219DFF3
+P 1300 4850
+F 0 "POT2" H 1300 4750 50  0000 C CNN
+F 1 "10k Ohm" H 1300 4850 42  0000 C CNN
+	1    1300 4850
+	0    1    1    0   
+$EndComp
+$Comp
+L POT POT1
+U 1 1 5219DFE2
+P 750 4250
+F 0 "POT1" H 750 4150 50  0000 C CNN
+F 1 "10K Ohm" H 750 4250 42  0000 C CNN
+	1    750  4250
+	0    1    1    0   
+$EndComp
+$Comp
+L BC547 Q?
+U 1 1 5219DFB2
+P 6000 4500
+F 0 "Q?" H 6000 4351 40  0000 R CNN
+F 1 "BC547" H 6000 4650 40  0000 R CNN
+F 2 "TO92" H 5900 4602 29  0000 C CNN
+	1    6000 4500
+	1    0    0    -1  
+$EndComp
+$Comp
+L MCP3208 ADC
+U 1 1 5218E6BD
+P 2250 6450
+F 0 "ADC" H 2250 6750 60  0000 C CNN
+F 1 "MCP3208" H 2250 5750 60  0000 C CNN
+	1    2250 6450
+	1    0    0    -1  
+$EndComp
+$EndSCHEMATC
